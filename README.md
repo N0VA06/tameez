@@ -78,7 +78,7 @@ red-teaming) or you need a license that allows commercial use (Llama 3.2 Communi
 |---|---|
 | ⭐ Final model, Tiny Aya (merged) | [IINOVAII/Tiny-Aya-Global-Tameez-GRPO](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO) |
 | Final model, Llama (merged) | [IINOVAII/Llama-3.2-3B-Tameez-GRPO](https://huggingface.co/IINOVAII/Llama-3.2-3B-Tameez-GRPO) |
-| All models and datasets | [https://huggingface.co/IINOVAII](https://huggingface.co/IINOVAII) |
+| All models and datasets | [models collection](https://huggingface.co/collections/IINOVAII/tameez-models-evals-and-training-logs-6af4bc9ca9f1f658bb2e277d) · [datasets collection](https://huggingface.co/collections/IINOVAII/tameez-hindi-hinglish-safety-datasets-6af4bca1aeb84d0562f9672c) |
 | Article | [https://huggingface.co/blog/IINOVAII/tameez](https://huggingface.co/blog/IINOVAII/tameez) |
 
 | Model repo | What it is |
