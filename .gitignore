@@ -1,0 +1,40 @@
+# Data (large or offensive by design)
+data/raw/
+data/processed/*
+!data/processed/.gitkeep
+data/lexicons/*
+!data/lexicons/whitelist.txt
+
+# Models and training outputs (stages/<stage>/model/ holds weights)
+stages/**/model/
+stages/**/env/rollout.json
+outputs/
+*.safetensors
+*.bin
+wandb/
+runs/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+.env
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Model replies to harmful prompts and human-check sheets (may contain unsafe text)
+stages/**/generations.json
+stages/**/scored.json
+stages/**/guard.json
+stages/**/toxicity.json
+stages/**/refusal_check.csv
+stages/**/samples_by_bucket.md
+stages/**/reward_samples.json
+stages/**/*_items.json
+results/reward_check/*.csv
+results/reward_check/reward_check.json
+results/logs/

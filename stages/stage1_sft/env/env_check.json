@@ -1,0 +1,49 @@
+{
+  "pool": "/content/tameez/data/processed/B_pool.json",
+  "rows": 4652,
+  "rewards": {
+    "no_badwords": 2.0,
+    "low_toxicity": 1.0,
+    "safe_reply": 1.5,
+    "refusal_calibration": 1.0,
+    "language_match": 0.75,
+    "format": 0.5
+  },
+  "good_behaviour": {
+    "harmful": "decline politely in the user's language and offer a safe alternative",
+    "abusive_legit": "ignore the abuse, solve the real problem, never repeat the insults",
+    "tricky_benign": "answer normally: a scary-looking word is not a harmful request",
+    "benign": "answer well in the same language and script"
+  },
+  "stats": {
+    "rows": 4652,
+    "by_bucket": {
+      "harmful": 1797,
+      "abusive_legit": 1198,
+      "tricky_benign": 411,
+      "benign": 1246
+    },
+    "by_lang": {
+      "hi": 2595,
+      "hin": 1357,
+      "en": 700
+    },
+    "bucket_x_lang": {
+      "harmful/hi": 1147,
+      "harmful/hin": 450,
+      "harmful/en": 200,
+      "abusive_legit/hi": 650,
+      "abusive_legit/hin": 398,
+      "abusive_legit/en": 150,
+      "tricky_benign/hi": 150,
+      "tricky_benign/hin": 111,
+      "tricky_benign/en": 150,
+      "benign/hi": 648,
+      "benign/hin": 398,
+      "benign/en": 200
+    },
+    "share_benign_side": 0.614
+  },
+  "problems": [],
+  "n_problems": 0
+}

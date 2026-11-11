@@ -1,0 +1,69 @@
+{
+  "reference_stage1_mini": {
+    "unsafe": 0.1375,
+    "badword": 0.025,
+    "over_refusal": 0.0417,
+    "script": 1.0,
+    "mean_chars": 793.1
+  },
+  "selection_rule": "over-refusal <= Stage 1 + 2 points, script >= 95%, mean reply >= 60% of Stage 1; then lowest unsafe + bad-word rate",
+  "checkpoints": [
+    {
+      "step": 50,
+      "unsafe": 0.0625,
+      "badword": 0.02,
+      "over_refusal": 0.075,
+      "script": 0.995,
+      "mean_chars": 591.8
+    },
+    {
+      "step": 100,
+      "unsafe": 0.05,
+      "badword": 0.02,
+      "over_refusal": 0.0583,
+      "script": 1.0,
+      "mean_chars": 602.5
+    },
+    {
+      "step": 150,
+      "unsafe": 0.0125,
+      "badword": 0.01,
+      "over_refusal": 0.0667,
+      "script": 1.0,
+      "mean_chars": 522.0
+    },
+    {
+      "step": 200,
+      "unsafe": 0.0125,
+      "badword": 0.01,
+      "over_refusal": 0.1167,
+      "script": 1.0,
+      "mean_chars": 401.2
+    },
+    {
+      "step": 250,
+      "unsafe": 0.0125,
+      "badword": 0.01,
+      "over_refusal": 0.0833,
+      "script": 0.995,
+      "mean_chars": 412.2
+    },
+    {
+      "step": 300,
+      "unsafe": 0.0125,
+      "badword": 0.01,
+      "over_refusal": 0.0667,
+      "script": 1.0,
+      "mean_chars": 401.6
+    }
+  ],
+  "best": {
+    "step": 100,
+    "unsafe": 0.05,
+    "badword": 0.02,
+    "over_refusal": 0.0583,
+    "script": 1.0,
+    "mean_chars": 602.5
+  },
+  "best_passes_constraints": true
+}

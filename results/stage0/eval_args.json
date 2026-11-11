@@ -1,0 +1,7 @@
+{
+  "stage": "stage0",
+  "model": "unsloth/Llama-3.2-3B-Instruct",
+  "mini": false,
+  "milu_limit": 0,
+  "max_tokens": 512
+}

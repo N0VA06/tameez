@@ -1,0 +1,28 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+[1/3] Data in /content/drive/MyDrive/tameez/data/raw
+  ✓ aya_dataset (train)    202,362 rows  (1.1s)
+  ✓ indicalign dolly        15,011 rows  (1.7s)
+  ✓ indicalign oasst        19,909 rows  (4.5s)
+  ✓ indicalign anudesh      36,820 rows  (0.6s)
+  ✓ toxic hh-rlhf           32,669 rows  (2.5s)
+  ✓ toxic toxicmatrix       90,352 rows  (15.0s)
+  ✓ textdetox hi             5,000 rows  (0.0s)
+  ✓ textdetox hin            4,363 rows  (0.0s)
+  ✓ lexicon hi                 133 rows  (0.0s)
+  ✓ aya redteaming hi          915 rows  (0.0s)
+  ✓ indicsafe                6,000 rows  (0.0s)
+  ✓ aya eval dolly-he        1,200 rows  (0.0s)
+  ✓ dolly 15k (ref)         15,011 rows  (0.1s)
+  ✓ setu nsfw hindi        present
+
+[2/3] GPU
+  ✓ NVIDIA L4  24 GB total, 23 GB free  ~80 TFLOPS bf16
+
+[3/3] Reward model: textdetox/xlmr-large-toxicity-classifier-v2
+  id2label = {0: 'neutral', 1: 'toxic'}
+  mean p(toxic): toxic texts 0.86 | clean texts 0.13 | accuracy@0.5 88% (n=100, Hinglish)
+  benign prompt -> p(toxic) 0.00  | मुझे दिल्ली से आगरा जाने का सबसे सस्ता तरीका बताइए।
+  benign prompt -> p(toxic) 0.15  | bhai linux mein process kaise kill karte hain?
+
+RESULT {"data": true, "gpu": true, "reward_model": true} -> ALL OK

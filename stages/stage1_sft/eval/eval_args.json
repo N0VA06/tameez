@@ -1,0 +1,8 @@
+{
+  "stage": "stage1_sft",
+  "out": null,
+  "model": "stages/stage1_sft/model/merged",
+  "mini": false,
+  "milu_limit": 0,
+  "max_tokens": 512
+}

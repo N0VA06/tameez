@@ -1,0 +1,562 @@
+{
+  "aya_dataset_hindi": {
+    "train_rows": 1153,
+    "test_rows": 0,
+    "prompt": {
+      "n": 1153,
+      "script": {
+        "deva": 1027,
+        "english": 120,
+        "mixed": 4,
+        "roman_hinglish": 2
+      },
+      "chars": {
+        "median": 82,
+        "p90": 192,
+        "max": 2254
+      },
+      "exact_duplicates": 176
+    },
+    "answer": {
+      "n": 1153,
+      "script": {
+        "deva": 1142,
+        "english": 6,
+        "mixed": 3,
+        "roman_hinglish": 2
+      },
+      "chars": {
+        "median": 178,
+        "p90": 910,
+        "max": 23077
+      },
+      "exact_duplicates": 85
+    },
+    "annotation_type": {
+      "original-annotations": 773,
+      "re-annotations": 380
+    },
+    "unique_annotators": 47,
+    "top_annotator_share": 0.145
+  },
+  "indicalign_instruct_dolly": {
+    "rows": 15011,
+    "num_turns": {
+      "1": 15011
+    },
+    "hin_Deva": {
+      "prompt": {
+        "n": 15011,
+        "script": {
+          "deva": 15008,
+          "mixed": 3
+        },
+        "chars": {
+          "median": 54,
+          "p90": 129,
+          "max": 12915
+        },
+        "exact_duplicates": 296
+      },
+      "answer": {
+        "n": 15011,
+        "script": {
+          "deva": 14902,
+          "other": 95,
+          "english": 5,
+          "mixed": 9
+        },
+        "chars": {
+          "median": 186,
+          "p90": 821,
+          "max": 26905
+        },
+        "exact_duplicates": 78
+      }
+    },
+    "hin_Latn": {
+      "prompt": {
+        "n": 15011,
+        "script": {
+          "english": 8174,
+          "roman_hinglish": 6837
+        },
+        "chars": {
+          "median": 66,
+          "p90": 155,
+          "max": 14231
+        },
+        "exact_duplicates": 293
+      },
+      "answer": {
+        "n": 14913,
+        "script": {
+          "roman_hinglish": 4116,
+          "english": 10797,
+          "other": 98
+        },
+        "chars": {
+          "median": 225,
+          "p90": 1010,
+          "max": 32376
+        },
+        "exact_duplicates": 68
+      }
+    }
+  },
+  "indicalign_instruct_oasst": {
+    "rows": 19909,
+    "num_turns": {
+      "1": 9093,
+      "2": 10408,
+      "3": 408
+    },
+    "hin_Deva": {
+      "prompt": {
+        "n": 19909,
+        "script": {
+          "deva": 19887,
+          "mixed": 7,
+          "other": 5,
+          "english": 10
+        },
+        "chars": {
+          "median": 87,
+          "p90": 287,
+          "max": 10059
+        },
+        "exact_duplicates": 16483
+      },
+      "answer": {
+        "n": 19909,
+        "script": {
+          "deva": 19677,
+          "english": 109,
+          "mixed": 57,
+          "other": 66
+        },
+        "chars": {
+          "median": 572,
+          "p90": 1830,
+          "max": 11191
+        },
+        "exact_duplicates": 9244
+      }
+    },
+    "hin_Latn": {
+      "prompt": {
+        "n": 19909,
+        "script": {
+          "english": 15537,
+          "roman_hinglish": 4142,
+          "other": 230
+        },
+        "chars": {
+          "median": 75,
+          "p90": 274,
+          "max": 11923
+        },
+        "exact_duplicates": 16537
+      },
+      "answer": {
+        "n": 19909,
+        "script": {
+          "english": 17978,
+          "roman_hinglish": 1677,
+          "other": 254
+        },
+        "chars": {
+          "median": 581,
+          "p90": 2039,
+          "max": 12793
+        },
+        "exact_duplicates": 9300
+      }
+    }
+  },
+  "indicalign_instruct_anudesh": {
+    "rows": 36820,
+    "num_turns": {
+      "1": 29465,
+      "3": 4736,
+      "2": 2614,
+      "4": 5
+    },
+    "prompt": {
+      "n": 36820,
+      "script": {
+        "english": 14116,
+        "roman_hinglish": 515,
+        "other": 8672,
+        "deva": 13485,
+        "mixed": 32
+      },
+      "chars": {
+        "median": 70,
+        "p90": 160,
+        "max": 10296
+      },
+      "exact_duplicates": 1726
+    },
+    "answer": {
+      "n": 36483,
+      "script": {
+        "english": 14132,
+        "other": 6702,
+        "roman_hinglish": 321,
+        "deva": 15634,
+        "mixed": 31
+      },
+      "chars": {
+        "median": 1012,
+        "p90": 2582,
+        "max": 18106
+      },
+      "exact_duplicates": 3848
+    },
+    "prompt_vs_answer_script": {
+      "english->english": 13485,
+      "deva->deva": 13125,
+      "other->other": 5858,
+      "other->deva": 2421,
+      "english->other": 501,
+      "other->english": 385,
+      "deva->other": 340,
+      "roman_hinglish->roman_hinglish": 271
+    }
+  },
+  "indicalign_toxic_hhrlhf": {
+    "rows": 32669,
+    "num_turns": {
+      "1": 32669
+    },
+    "eng_Latn": {
+      "prompt": {
+        "n": 32669,
+        "script": {
+          "english": 32664,
+          "roman_hinglish": 5
+        },
+        "chars": {
+          "median": 53,
+          "p90": 128,
+          "max": 6569
+        },
+        "exact_duplicates": 19657
+      },
+      "answer_present": 32667
+    },
+    "hin_Deva": {
+      "prompt": {
+        "n": 32669,
+        "script": {
+          "deva": 32667,
+          "other": 2
+        },
+        "chars": {
+          "median": 60,
+          "p90": 143,
+          "max": 6659
+        },
+        "exact_duplicates": 19764
+      },
+      "answer_present": 32669
+    },
+    "hin_Latn": {
+      "prompt": {
+        "n": 32669,
+        "script": {
+          "roman_hinglish": 25836,
+          "english": 6833
+        },
+        "chars": {
+          "median": 74,
+          "p90": 179,
+          "max": 8078
+        },
+        "exact_duplicates": 19743
+      },
+      "answer_present": 32667
+    }
+  },
+  "indicalign_toxic_toxicmatrix": {
+    "rows": 90352,
+    "num_turns": {
+      "1": 90352
+    },
+    "eng_Latn": {
+      "prompt": {
+        "n": 90352,
+        "script": {
+          "english": 90284,
+          "deva": 41,
+          "roman_hinglish": 19,
+          "mixed": 4,
+          "other": 4
+        },
+        "chars": {
+          "median": 175,
+          "p90": 364,
+          "max": 9547
+        },
+        "exact_duplicates": 531
+      },
+      "answer_present": 90352
+    },
+    "hin_Deva": {
+      "prompt": {
+        "n": 90352,
+        "script": {
+          "deva": 90338,
+          "mixed": 14
+        },
+        "chars": {
+          "median": 183,
+          "p90": 384,
+          "max": 9998
+        },
+        "exact_duplicates": 630
+      },
+      "answer_present": 90352
+    },
+    "hin_Latn": {
+      "prompt": {
+        "n": 90352,
+        "script": {
+          "roman_hinglish": 41861,
+          "english": 48491
+        },
+        "chars": {
+          "median": 227,
+          "p90": 482,
+          "max": 12866
+        },
+        "exact_duplicates": 630
+      },
+      "answer_present": 90352
+    }
+  },
+  "textdetox_toxicity_hi": {
+    "rows": 5000,
+    "toxic": 2500,
+    "non_toxic": 2500,
+    "text": {
+      "n": 5000,
+      "script": {
+        "deva": 4624,
+        "mixed": 366,
+        "roman_hinglish": 6,
+        "english": 4
+      },
+      "chars": {
+        "median": 125,
+        "p90": 258,
+        "max": 592
+      },
+      "exact_duplicates": 37
+    },
+    "toxic_text_script": {
+      "deva": 2456,
+      "mixed": 36,
+      "roman_hinglish": 6,
+      "english": 2
+    }
+  },
+  "textdetox_toxicity_hin": {
+    "rows": 4363,
+    "toxic": 2200,
+    "non_toxic": 2163,
+    "text": {
+      "n": 4363,
+      "script": {
+        "roman_hinglish": 2469,
+        "deva": 1269,
+        "mixed": 195,
+        "english": 430
+      },
+      "chars": {
+        "median": 83,
+        "p90": 233,
+        "max": 619
+      },
+      "exact_duplicates": 129
+    },
+    "toxic_text_script": {
+      "roman_hinglish": 1414,
+      "deva": 567,
+      "english": 208,
+      "mixed": 11
+    }
+  },
+  "textdetox_toxicity_en": {
+    "rows": 5000,
+    "toxic": 2500,
+    "non_toxic": 2500,
+    "text": {
+      "n": 5000,
+      "script": {
+        "english": 4997,
+        "roman_hinglish": 3
+      },
+      "chars": {
+        "median": 65,
+        "p90": 114,
+        "max": 1774
+      },
+      "exact_duplicates": 103
+    },
+    "toxic_text_script": {
+      "english": 2500
+    }
+  },
+  "lexicons": {
+    "textdetox_hi": {
+      "entries": 133,
+      "unique_normalised": 133,
+      "multi_word": 19,
+      "short_le3_chars": 10,
+      "script": {
+        "deva": 133
+      },
+      "found_in_benign_text": 13,
+      "found_in_benign_text_10plus": 7
+    },
+    "textdetox_hin": {
+      "entries": 209,
+      "unique_normalised": 206,
+      "multi_word": 0,
+      "short_le3_chars": 5,
+      "script": {
+        "english": 209
+      },
+      "found_in_benign_text": 29,
+      "found_in_benign_text_10plus": 7
+    },
+    "textdetox_en": {
+      "entries": 3386,
+      "unique_normalised": 3343,
+      "multi_word": 336,
+      "short_le3_chars": 90,
+      "script": {
+        "english": 3381,
+        "other": 3,
+        "roman_hinglish": 2
+      },
+      "found_in_benign_text": 207,
+      "found_in_benign_text_10plus": 46
+    },
+    "setu_hindi": {
+      "entries": 173,
+      "unique_normalised": 142,
+      "multi_word": 72,
+      "short_le3_chars": 2,
+      "script": {
+        "deva": 173
+      },
+      "found_in_benign_text": 8,
+      "found_in_benign_text_10plus": 4
+    },
+    "setu_english": {
+      "entries": 403,
+      "unique_normalised": 403,
+      "multi_word": 124,
+      "short_le3_chars": 10,
+      "script": {
+        "english": 402,
+        "other": 1
+      },
+      "found_in_benign_text": 32,
+      "found_in_benign_text_10plus": 4
+    },
+    "union_unique": 3812,
+    "overlap_setu_hindi_vs_textdetox_hi": 18,
+    "overlap_setu_english_vs_textdetox_en": 392
+  },
+  "aya_redteaming_hindi": {
+    "rows": 915,
+    "prompt": {
+      "n": 915,
+      "script": {
+        "deva": 915
+      },
+      "chars": {
+        "median": 57,
+        "p90": 96,
+        "max": 253
+      },
+      "exact_duplicates": 2
+    },
+    "global_or_local": {
+      "global": 608,
+      "local": 307
+    },
+    "harm_category": {
+      "Violence, Threats & Incitement": 311,
+      "Profanity": 137,
+      "Hate Speech": 200,
+      "Bullying & Harassment": 143,
+      "Self-Harm": 108,
+      "Discrimination & Injustice": 334,
+      "Harms of Representation Allocation and Quality of Service": 126,
+      "Non-consensual sexual content": 103,
+      "Graphic material": 173
+    }
+  },
+  "indicsafe": {
+    "rows": 6000,
+    "languages": 12,
+    "hindi_rows": 500,
+    "raw_category_labels": 10,
+    "normalised_category_labels": 9,
+    "hindi_by_category": {
+      "Harmful Instructions": 51,
+      "Offensive/Hate Speech": 49,
+      "Misinformation/Conspiracy": 50,
+      "Harmless Control": 125,
+      "Gender & Caste Discrimination": 45,
+      "Religious Hate or Provocation": 45,
+      "Political Manipulation": 45,
+      "Health Misinformation": 45,
+      "Tricky Ambiguous": 45
+    },
+    "hindi_translated_prompt": {
+      "n": 500,
+      "script": {
+        "deva": 500
+      },
+      "chars": {
+        "median": 51,
+        "p90": 74,
+        "max": 105
+      },
+      "exact_duplicates": 0
+    },
+    "english_prompts_shared_across_languages": 500
+  },
+  "aya_eval_dolly_human_edited_hindi": {
+    "rows": 200,
+    "prompt": {
+      "n": 200,
+      "script": {
+        "deva": 200
+      },
+      "chars": {
+        "median": 109,
+        "p90": 1748,
+        "max": 7831
+      },
+      "exact_duplicates": 1
+    },
+    "script": {
+      "Deva": 200
+    }
+  },
+  "leakage_exact_match": {
+    "aya_eval_dolly_hindi_prompts_also_in_indicalign_dolly": 200,
+    "indicsafe_english_prompts_in_hhrlhf": 3,
+    "indicsafe_english_prompts_in_toxicmatrix": 0,
+    "aya_redteaming_hindi_prompts_in_hhrlhf": 1,
+    "aya_redteaming_hindi_prompts_in_toxicmatrix": 0,
+    "aya_dataset_hindi_test_in_train": 0
+  }
+}

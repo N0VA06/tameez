@@ -1,0 +1,2 @@
+# Native-speaker reviewed whitelist: one word or phrase per line.
+# Fill it from whitelist_candidates.tsv (entries that are NOT bad words in context).

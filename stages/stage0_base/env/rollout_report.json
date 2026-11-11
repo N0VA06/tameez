@@ -1,0 +1,110 @@
+{
+  "model": "unsloth/Llama-3.2-3B-Instruct",
+  "n": 200,
+  "report": {
+    "all": {
+      "n": 200,
+      "no_badwords": -0.025,
+      "low_toxicity": 0.908,
+      "safe_reply": 0.7,
+      "refusal_calibration": 0.417,
+      "language_match": 0.978,
+      "format": -0.01,
+      "total": 3.054,
+      "refusal_rate": 0.165,
+      "script_ok_rate": 0.98,
+      "mean_chars": 864.5
+    },
+    "bucket:abusive_legit": {
+      "n": 50,
+      "no_badwords": -0.04,
+      "low_toxicity": 0.764,
+      "safe_reply": 0.76,
+      "refusal_calibration": 0.41,
+      "language_match": 1.0,
+      "format": -0.02,
+      "total": 2.974,
+      "refusal_rate": 0.06,
+      "script_ok_rate": 1.0,
+      "mean_chars": 910.8
+    },
+    "bucket:benign": {
+      "n": 50,
+      "no_badwords": 0.0,
+      "low_toxicity": 0.992,
+      "safe_reply": 0.88,
+      "refusal_calibration": 0.5,
+      "language_match": 0.95,
+      "format": -0.02,
+      "total": 3.514,
+      "refusal_rate": 0.0,
+      "script_ok_rate": 0.96,
+      "mean_chars": 907.4
+    },
+    "bucket:harmful": {
+      "n": 50,
+      "no_badwords": 0.0,
+      "low_toxicity": 0.923,
+      "safe_reply": 0.48,
+      "refusal_calibration": 0.29,
+      "language_match": 1.0,
+      "format": 0.0,
+      "total": 2.683,
+      "refusal_rate": 0.58,
+      "script_ok_rate": 1.0,
+      "mean_chars": 526.6
+    },
+    "bucket:tricky_benign": {
+      "n": 50,
+      "no_badwords": -0.06,
+      "low_toxicity": 0.954,
+      "safe_reply": 0.68,
+      "refusal_calibration": 0.47,
+      "language_match": 0.96,
+      "format": 0.0,
+      "total": 3.044,
+      "refusal_rate": 0.02,
+      "script_ok_rate": 0.96,
+      "mean_chars": 1113.2
+    },
+    "lang:en": {
+      "n": 40,
+      "no_badwords": -0.075,
+      "low_toxicity": 0.999,
+      "safe_reply": 0.9,
+      "refusal_calibration": 0.375,
+      "language_match": 0.975,
+      "format": 0.0,
+      "total": 3.305,
+      "refusal_rate": 0.15,
+      "script_ok_rate": 0.975,
+      "mean_chars": 1344.8
+    },
+    "lang:hi": {
+      "n": 108,
+      "no_badwords": -0.019,
+      "low_toxicity": 0.864,
+      "safe_reply": 0.704,
+      "refusal_calibration": 0.417,
+      "language_match": 1.0,
+      "format": 0.0,
+      "total": 3.049,
+      "refusal_rate": 0.222,
+      "script_ok_rate": 1.0,
+      "mean_chars": 624.9
+    },
+    "lang:hin": {
+      "n": 52,
+      "no_badwords": 0.0,
+      "low_toxicity": 0.93,
+      "safe_reply": 0.538,
+      "refusal_calibration": 0.452,
+      "language_match": 0.933,
+      "format": -0.038,
+      "total": 2.87,
+      "refusal_rate": 0.058,
+      "script_ok_rate": 0.942,
+      "mean_chars": 992.7
+    }
+  }
+}

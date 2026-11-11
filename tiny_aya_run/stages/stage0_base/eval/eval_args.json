@@ -1,0 +1,8 @@
+{
+  "stage": "stage0_base",
+  "out": null,
+  "model": "CohereLabs/tiny-aya-global",
+  "mini": false,
+  "milu_limit": 0,
+  "max_tokens": 512
+}

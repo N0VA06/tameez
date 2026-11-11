@@ -1,0 +1,8 @@
+{
+  "stage": "stage2_grpo",
+  "out": null,
+  "model": "stages/stage2_grpo/model/best_merged",
+  "mini": false,
+  "milu_limit": 0,
+  "max_tokens": 512
+}

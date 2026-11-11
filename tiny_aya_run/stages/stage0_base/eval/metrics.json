@@ -1,0 +1,167 @@
+{
+  "stage": "stage0_base",
+  "unsafe_rate": {
+    "all_harmful": {
+      "rate": 0.0454,
+      "n": 1498,
+      "ci95": [
+        0.036,
+        0.0571
+      ]
+    },
+    "aya_redteaming": {
+      "rate": 0.0394,
+      "n": 913,
+      "ci95": [
+        0.0286,
+        0.0541
+      ]
+    },
+    "aya_redteaming_hinglish": {
+      "rate": 0.1871,
+      "n": 139,
+      "ci95": [
+        0.131,
+        0.26
+      ]
+    },
+    "indicsafe": {
+      "rate": 0.0182,
+      "n": 330,
+      "ci95": [
+        0.0084,
+        0.0391
+      ]
+    },
+    "suraksha": {
+      "rate": 0.0,
+      "n": 116,
+      "ci95": [
+        0.0,
+        0.0321
+      ]
+    }
+  },
+  "badword_rate": {
+    "rate": 0.0253,
+    "n": 2014,
+    "ci95": [
+      0.0193,
+      0.0331
+    ]
+  },
+  "badword_rate_angry": {
+    "rate": 0.04,
+    "n": 200,
+    "ci95": [
+      0.0204,
+      0.0769
+    ]
+  },
+  "toxicity": {
+    "abusive_rate": {
+      "rate": 0.0298,
+      "n": 2014,
+      "ci95": [
+        0.0232,
+        0.0382
+      ]
+    },
+    "mean_p_abusive": 0.0957
+  },
+  "over_refusal": {
+    "all_benign": {
+      "rate": 0.0252,
+      "n": 516,
+      "ci95": [
+        0.0148,
+        0.0426
+      ]
+    },
+    "indicsafe": {
+      "rate": 0.0118,
+      "n": 170,
+      "ci95": [
+        0.0032,
+        0.0419
+      ]
+    },
+    "tricky_test": {
+      "rate": 0.0,
+      "n": 146,
+      "ci95": [
+        -0.0,
+        0.0256
+      ]
+    },
+    "angry_test": {
+      "rate": 0.055,
+      "n": 200,
+      "ci95": [
+        0.031,
+        0.0958
+      ]
+    }
+  },
+  "refusal_on_harmful": {
+    "rate": 0.3973,
+    "n": 1382,
+    "ci95": [
+      0.3718,
+      0.4233
+    ]
+  },
+  "script_fidelity": {
+    "all": {
+      "rate": 0.9395,
+      "n": 2214,
+      "ci95": [
+        0.9288,
+        0.9487
+      ]
+    },
+    "hi": {
+      "rate": 0.9936,
+      "n": 1879,
+      "ci95": [
+        0.9889,
+        0.9963
+      ]
+    },
+    "hin": {
+      "rate": 0.502,
+      "n": 245,
+      "ci95": [
+        0.4399,
+        0.5641
+      ]
+    },
+    "en": {
+      "rate": 1.0,
+      "n": 90,
+      "ci95": [
+        0.9591,
+        1.0
+      ]
+    }
+  },
+  "milu_hindi_accuracy": {
+    "accuracy": 0.4543,
+    "n": 14831,
+    "ci95": [
+      0.4463,
+      0.4623
+    ],
+    "by_domain": {
+      "Arts & Humanities": 0.4137,
+      "Engineering & Tech": 0.4626,
+      "Science": 0.4771,
+      "Social Sciences": 0.4136,
+      "Environmental Sciences": 0.4777,
+      "Health & Medicine": 0.6171,
+      "Business Studies": 0.4325,
+      "Law & Governance": 0.4522
+    }
+  },
+  "mean_reply_chars": 1179.8
+}

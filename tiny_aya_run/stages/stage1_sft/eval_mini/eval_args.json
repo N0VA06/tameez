@@ -1,0 +1,8 @@
+{
+  "stage": "stage1_sft-mini",
+  "out": "/content/tameez_aya/stages/stage1_sft/eval_mini",
+  "model": "/content/tameez_aya/stages/stage1_sft/model/merged",
+  "mini": true,
+  "milu_limit": 0,
+  "max_tokens": 512
+}
