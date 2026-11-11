@@ -1,5 +1,7 @@
 # Tameez · तमीज़
 
+![Tameez: polite small language models in Hindi, Hinglish and English](assets/tameez_demo.gif)
+
 **Teaching 3B language models manners in Hindi and Hinglish with reinforcement learning (GRPO).**
 
 Everything was built and trained on **one 24 GB NVIDIA L4 GPU** with [AlignTune](https://github.com/Lexsi-Labs/aligntune).
