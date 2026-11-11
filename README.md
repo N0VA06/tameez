@@ -127,12 +127,15 @@ Cohere Labs × Hugging Face, Nov 2026).
 | **[AuditKIT](https://github.com/Lexsi-Labs/AuditKIT)** 1.1.10 | **Auditing the results.** `scripts/audit_with_auditkit.py` loads every stage's saved scorecard replies as AuditKIT samples, scores them through AuditKIT's `precomputed` model (no regeneration, CPU only) with AuditKIT scorers for unsafe replies, bad words, refusals and over-refusal plus AuditKIT's own `RefusalDetector`, and reports the Stage 0 → 1 → 2 deltas with AuditKIT's `compare` |
 | SafeTune, CircuitKIT | not used |
 
-**Feedback for Lexsi:** [docs/ALIGNTUNE_ISSUES.md](docs/ALIGNTUNE_ISSUES.md) documents three AlignTune issues found
-during the project, each with a minimal reproduction, the root cause, a workaround and a suggested fix:
+**Contributed back to AlignTune:** three AlignTune issues found during the project were reproduced, written up in
+[docs/ALIGNTUNE_ISSUES.md](docs/ALIGNTUNE_ISSUES.md) and fixed upstream by this project's author in
+**[Lexsi-Labs/aligntune PR #61](https://github.com/Lexsi-Labs/aligntune/pull/61)** (merged 7 Nov 2026, with regression tests):
 
-1. `backend="unsloth"` crashes reward functions that load a Llama model.
-2. `rollout_backend="vllm"` fails by default on the TRL backend.
-3. `aligntune info` always shows ✗ TRL.
+| Issue | What [PR #61](https://github.com/Lexsi-Labs/aligntune/pull/61) changed (merged 7 Nov 2026) |
+|---|---|
+| `backend="unsloth"` crashes rewards that load a model of the policy's family (e.g. Llama Guard with a Llama policy) | AlignTune now logs a warning that explains the cause and names the workaround, `backend="trl"`. The crash itself remains (isolating reward models from Unsloth's patches is a larger change) |
+| `rollout_backend="vllm"` fails by default on the TRL backend with a misleading "install vLLM" error | now a clear `ValueError` saying to set `ALIGNTUNE_ENABLE_VLLM=1` (or use `rollout_backend="hf"`), and `docs/PARAMETERS.md` documents the variable |
+| `aligntune info` always shows ✗ TRL | fixed: the dependency checks now detect TRL correctly |
 
 ### How Cohere Labs models and data are used
 

@@ -1,5 +1,17 @@
 # AlignTune issues: how to reproduce and fix
 
+> **Status: reported and fixed upstream.** All three issues were contributed back to AlignTune by this project's author
+> in **[Lexsi-Labs/aligntune PR #61](https://github.com/Lexsi-Labs/aligntune/pull/61)**, *"fix: aligntune info TRL status, clear vLLM rollout error, Unsloth reward
+> warning"*, merged on 7 November 2026 (6 files, +62 / −4, with regression tests and a Colab reproduction notebook).
+
+| Issue | What [PR #61](https://github.com/Lexsi-Labs/aligntune/pull/61) changed (merged 7 Nov 2026) |
+|---|---|
+| `backend="unsloth"` crashes rewards that load a model of the policy's family (e.g. Llama Guard with a Llama policy) | AlignTune now logs a warning that explains the cause and names the workaround, `backend="trl"`. The crash itself remains (isolating reward models from Unsloth's patches is a larger change) |
+| `rollout_backend="vllm"` fails by default on the TRL backend with a misleading "install vLLM" error | now a clear `ValueError` saying to set `ALIGNTUNE_ENABLE_VLLM=1` (or use `rollout_backend="hf"`), and `docs/PARAMETERS.md` documents the variable |
+| `aligntune info` always shows ✗ TRL | fixed: the dependency checks now detect TRL correctly |
+
+The sections below are the original write-up made during the project, on AlignTune 0.1.30, before the fix.
+
 Three issues found while using AlignTune for Tameez, re-checked on a fresh install. Each section has the symptom, a minimal reproduction, the cause in AlignTune's code, a workaround you can use today, and a suggested fix.
 
 **Tested with:** AlignTune 0.1.30 (git commit `c3d648f`), TRL 1.7.1, transformers 5.22.0, vLLM 0.22.1, torch 2.11.0+cu130, Python 3.13, NVIDIA L4 (Google Colab). Re-tested 2026-11-04.
