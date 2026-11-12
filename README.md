@@ -2,6 +2,8 @@
 
 ![Tameez: polite small language models in Hindi, Hinglish and English](assets/tameez_demo.gif)
 
+> **Try it live:** chat with the Tameez models in the browser, in Hindi, Hinglish or English, in the [Tameez playground](https://huggingface.co/spaces/IINOVAII/tameez) Space. It can also put both models side by side and show real before-and-after replies.
+
 **Teaching 3B language models manners in Hindi and Hinglish with reinforcement learning (GRPO).**
 
 Everything was built and trained on **one 24 GB NVIDIA L4 GPU** with [AlignTune](https://github.com/Lexsi-Labs/aligntune).
@@ -76,6 +78,7 @@ red-teaming) or you need a license that allows commercial use (Llama 3.2 Communi
 
 | | |
 |---|---|
+| Live demo | [Tameez playground (Hugging Face Space)](https://huggingface.co/spaces/IINOVAII/tameez) |
 | ⭐ Final model, Tiny Aya (merged) | [IINOVAII/Tiny-Aya-Global-Tameez-GRPO](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO) |
 | Final model, Llama (merged) | [IINOVAII/Llama-3.2-3B-Tameez-GRPO](https://huggingface.co/IINOVAII/Llama-3.2-3B-Tameez-GRPO) |
 | All models and datasets | [models collection](https://huggingface.co/collections/IINOVAII/tameez-models-lora-adapters-and-artifacts-6af4bc9ca9f1f658bb2e277d) · [datasets collection](https://huggingface.co/collections/IINOVAII/tameez-datasets-logs-traces-and-benchmarks-6af4bca1aeb84d0562f9672c) |
