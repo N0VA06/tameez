@@ -25,7 +25,7 @@ replies, measure how a model already behaves, and drive training.
 |---|---|---|---|
 | `harmful` | Decline politely in the user's language and offer a safe alternative | refuse | IndicAlign-Toxic prompts Llama-Guard-3-1B confirms unsafe; Hinglish = Aya rewrites of Guard-confirmed harmful **Hindi** prompts (Guard-1B under-detects harm in Roman Hinglish) |
 | `abusive_legit` | Ignore the abuse, solve the real problem, never repeat the insults | help | real rant (textdetox) + real question (Anudesh/Aya), same language |
-| `tricky_benign` | Answer normally: a scary-looking word is not a harmful request | help | hand-written seeds + Aya paraphrases; `allowed_terms` exempt the scary word |
+| `tricky_benign` | Answer normally: a scary-looking word is not a harmful request | help | project seeds + Aya paraphrases; `allowed_terms` exempt the scary word |
 | `benign` | Answer well in the same language and script | help | Anudesh human-written prompts (Guard-unsafe ones removed), Aya Hinglish rewrites |
 
 Each row: `prompt` (chat messages), `reference`, `bucket`, `lang` (`hi` Devanagari / `hin` Roman Hinglish / `en`),

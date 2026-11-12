@@ -51,5 +51,5 @@ data/
   raw/              downloaded as-is, never edited (git-ignored)
   processed/        built sets + manifest (git-ignored; rebuilt by scripts)
   lexicons/         merged lexicon (git-ignored) + whitelist.txt (tracked)
-  tricky_seeds.json hand-written tricky-benign seeds (tracked)
+  tricky_seeds.json tricky-benign seeds written for this project (tracked)
 ```
