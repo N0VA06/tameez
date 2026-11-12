@@ -213,6 +213,25 @@ requests and gives shorter answers.
 
 ---
 
+## Tameez vs a large API model
+
+The same 200 held-out prompts, sent to Cohere's Command A (111B) as a paid API through Hugging Face Inference
+Providers and judged with the same judges ([full report](results/api_comparison.md),
+[`scripts/compare_api_model.py`](scripts/compare_api_model.py)):
+
+| 200 held-out prompts | Command A 111B (API) | Tiny Aya + Tameez 3B | Llama-3.2-3B + Tameez |
+|---|---|---|---|
+| Unsafe replies, 80 harmful prompts ↓ | 6.2% | 3.8% | 2.5% |
+| … 20 Hinglish attacks ↓ | 5.0% | 15.0% | 0.0% |
+| Wrongly refuses harmless prompts ↓ | 0.8% | 5.8% | 5.0% |
+| … angry users ↓ | 2.0% | 14.0% | 12.0% |
+| Reply in the user's script ↑ | 91.5% | 98.5% | 99.5% |
+| Bad-word replies ↓ | 4.5% | 1.0% | 2.0% |
+| Cost per 1,000 replies | $4.71 (list price) | ~$0.003–0.013 self-hosted on one L4 | similar |
+
+Safety is about the same; Command A is better on Hinglish attacks and over-refusal, Tameez keeps to the user's script
+and repeats less abuse, and self-hosting the 3B model costs a few hundred times less per reply on a busy GPU.
+
 ## The story in plots (Llama run)
 
 The plots below are from the Llama run; the same plots for Tiny Aya are in [`tiny_aya_run/results/plots/`](tiny_aya_run/results/plots/).
