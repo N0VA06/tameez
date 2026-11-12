@@ -164,7 +164,7 @@ script for 100% of rows; lexicon words appear in 26% of angry-user prompts (by d
 | Plan | Implemented | Why |
 |---|---|---|
 | IndicAlign romanised Hindi for Hinglish | Aya Expanse rewrites of Devanagari text (`make_synthetic.py`) | IndicAlign `hin_Latn` is machine transliteration (see DATA_ANALYSIS.md) |
-| CuratorKIT paraphrase / dedup | Aya Expanse via vLLM; MinHash via `datasketch` | Same idea with fewer moving parts; every generation is cached with its validation result |
+| CuratorKIT paraphrase / dedup | Aya Expanse via vLLM; MinHash via `datasketch`; CuratorKIT later re-checks the finished splits (`scripts/curate_with_curatorkit.py`) | Same idea with fewer moving parts; every generation is cached with its validation result |
 | Language mix 50/40/10 | target ~56/32/12 | Not enough natural Roman Hinglish |
 | HH-RLHF rows are all "harmful" | Only prompts Llama-Guard-3-1B flags as unsafe | ~60% duplicates and many innocuous first turns |
 | `meta-llama/*` 3B and Guard-1B | identical mirrors | Meta access still pending |

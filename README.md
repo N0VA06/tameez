@@ -123,7 +123,7 @@ Cohere Labs × Hugging Face, Nov 2026).
 | Repo | Role in Tameez |
 |---|---|
 | **[AlignTune](https://github.com/Lexsi-Labs/aligntune)** 0.1.30 (Llama run), 0.1.35 (Tiny Aya run) | **Both training stages.** `scripts/train_sft.py` calls `create_sft_trainer` (LoRA SFT, TRL backend). `scripts/train_grpo.py` calls `create_rl_trainer(algorithm="grpo", loss_type="dr_grpo")` with the six Tameez rewards, which `TameezEnv.reward_specs()` passes in AlignTune's custom-reward format (`{"type": "custom", "weight": w, "params": {"function": fn}}`). Each reward follows AlignTune's per-sample contract `fn(text, prompt=..., bucket=..., lang=..., allowed_terms=...) -> float \| None`, so AlignTune forwards the pool's extra columns (bucket, language, exempt words) to every reward. AlignTune writes a `lexsi_provenance.json` next to every adapter |
-| CuratorKIT | installed by `run_colab.sh setup` and planned for paraphrasing and dedup; the final pipeline uses Aya Expanse 8B via vLLM with its own validation, plus `datasketch` MinHash instead (see [PIPELINE.md](docs/PIPELINE.md#decisions-that-differ-from-planmd)) |
+| **[CuratorKIT](https://github.com/Lexsi-Labs/CuratorKIT)** 0.1.27 | **Auditing the data.** `scripts/curate_with_curatorkit.py` re-checks the published splits with CuratorKIT's `ExactDeduplicator`, `MinHashDeduplicator` and `SecretsGate`: duplicates inside Sets A and B, training prompts that near-duplicate a test prompt, and leaked secrets ([report](results/curatorkit_report.md)). It found 3 real overlaps out of 18,642 training rows, all in benign over-refusal tests. The data itself was built with Aya Expanse 8B via vLLM and `datasketch` MinHash (see [PIPELINE.md](docs/PIPELINE.md#decisions-that-differ-from-planmd)) |
 | **[AuditKIT](https://github.com/Lexsi-Labs/AuditKIT)** 1.1.10 | **Auditing the results.** `scripts/audit_with_auditkit.py` loads every stage's saved scorecard replies as AuditKIT samples, scores them through AuditKIT's `precomputed` model (no regeneration, CPU only) with AuditKIT scorers for unsafe replies, bad words, refusals and over-refusal plus AuditKIT's own `RefusalDetector`, and reports the Stage 0 → 1 → 2 deltas with AuditKIT's `compare`. Reports: [Tiny Aya](tiny_aya_run/results/auditkit_report.md), [Llama](results/auditkit_report.md) |
 | SafeTune, CircuitKIT | not used |
 
@@ -385,6 +385,8 @@ python scripts/evaluate.py --stage stage2_grpo --model stages/stage2_grpo/model/
 python scripts/judge.py --stage stage2_grpo
 python -I scripts/make_plots.py
 python -I scripts/audit_with_auditkit.py --root . --name "Llama-3.2-3B"   # AuditKIT audit of the saved replies (CPU)
+hf download IINOVAII/tameez-hindi-safety-data --repo-type dataset --local-dir data/hf_safety_data
+python -I scripts/curate_with_curatorkit.py --data data/hf_safety_data          # CuratorKIT audit of the data splits (CPU)
 ```
 
 Every step, input, output and setting is described in [docs/PIPELINE.md](docs/PIPELINE.md).

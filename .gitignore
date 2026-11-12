@@ -1,5 +1,6 @@
 # Data (large or offensive by design)
 data/raw/
+data/hf_safety_data/
 data/processed/*
 !data/processed/.gitkeep
 data/lexicons/*
