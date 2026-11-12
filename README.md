@@ -62,14 +62,12 @@ abusive-speech classifier), so a model can't score well just by learning to plea
 | Abusive replies (MuRIL) ↓ | **4.3%** | 7.5% |
 | Replies with bad words ↓ | **0.6%** | 0.7% |
 | MILU Hindi knowledge ↑ | **43.2%** | 39.5% |
-| Judged more helpful than its own Stage 1 model ↑ | **61.5%** | 42.1% |
+| Helpfulness win rate vs its own SFT model (ties count ½) ↑ | **61.5%** | 42.1% |
 | License | CC-BY-NC 4.0 (non-commercial) | Llama 3.2 Community License |
 
 **Recommended: Tiny-Aya-Global-Tameez-GRPO.** Both final models are about equally safe overall (3.9% vs 3.7% unsafe),
 but Tiny Aya gets there with a better trade-off: it refuses harmful requests explicitly more often, wrongly refuses
-harmless and angry-user questions about half as often, produces fewer abusive replies, knows more Hindi, and the
-helpfulness judge (Aya Expanse 8B) preferred it over its own SFT version 61.5% of the time, while Llama's GRPO model
-lost that comparison (42.1%).
+harmless and angry-user questions about half as often, produces fewer abusive replies, knows more Hindi, and in 400 head-to-head comparisons with its own SFT version (Aya Expanse 8B as judge) it won 139 and lost 47, with 214 ties (a 61.5% win rate, ties counted as half), while Llama's GRPO model lost more than it won (42.1%).
 
 **Pick the Llama model instead if** Hinglish safety is your main concern (15.8% vs 29.5% unsafe on Hinglish
 red-teaming) or you need a license that allows commercial use (Llama 3.2 Community License, with Meta's terms).
@@ -179,7 +177,7 @@ Cohere Labs × Hugging Face, Nov 2026).
 | Over-refusal, angry users with a real question ↓ | 5.5% | 2.0% | 9.0% |
 | Answers Hinglish in Hinglish ↑ | 50.2% | 89.4% | **94.3%** |
 | Hindi knowledge (MILU, 14,831 questions) ↑ | 45.4% | 41.3% | 43.2% |
-| Judged more helpful than Stage 1 ↑ | – | – | **61.5%** |
+| Helpfulness win rate vs Stage 1 (ties count ½) ↑ | – | – | **61.5%** |
 
 Plain SFT more than quadrupled Tiny Aya's unsafe replies; GRPO brought them back to about the base level, doubled
 explicit refusals and was judged *more* helpful than the SFT model. Hinglish red-teaming remains the weak spot.
@@ -204,7 +202,7 @@ are **never used in training** (Llama-Guard-3-8B, MuRIL), so a model can't impro
 | Over-refusal, angry users with a real question ↓ | 5.0% | 8.0% | **15.5%** ⚠️ |
 | Answers in the user's own script ↑ | 99.6% | 99.8% | 99.7% |
 | Hindi knowledge (MILU, 14,831 questions) ↑ | 38.5% | 39.3% | **39.5%** |
-| Judged more helpful than Stage 1 ↑ | – | – | 42% ⚠️ |
+| Helpfulness win rate vs Stage 1 (ties count ½) ↑ | – | – | 42% ⚠️ |
 
 **In one sentence:** ordinary Hindi fine-tuning made the model *less* safe; Tameez GRPO made it **four times safer than
 that, and safer than the original**, without losing Hindi knowledge, but it now refuses more rude-but-legitimate

@@ -10,7 +10,7 @@ Outputs (<out>/, default stages/stage2_grpo/):
     train/train_log.json       per-step reward means, KL, loss, completion length (TRL log history)
     train/reward_samples.json  sampled (bucket, lang, reward, value, completion) records
 
-Defaults are sized for one 24 GB L4 (~2.7 h at ~32 s/step): 300 steps, 4 prompts x 4 generations per step
+Defaults are sized for one 24 GB L4 (measured: Llama 2 h 17 min at ~27 s/step, Tiny Aya 3 h 35 min at ~44 s/step): 300 steps, 4 prompts x 4 generations per step
 (batch 8 x 2 accumulation), completions up to 256 tokens, learning rate 5e-5, checkpoint every 50 steps.
 Why: at the plan's 5e-6 (and at 2e-5 over 150 steps) the KL to Stage 1 stayed below 0.003 and held-out changes
 were within noise, i.e. the LoRA barely moved; no reward hacking was seen (stable reply length, non-zero
@@ -74,7 +74,7 @@ def main():
     ap.add_argument("--data", default=str(PROCESSED / "B_pool.json"))
     # trl + hf: Unsloth patches Llama attention globally, which breaks the Llama-Guard reward model
     # loaded in the same process ("no attribute apply_qkv"); TRL's vLLM rollout is not detected inside
-    # this process. HF rollouts measured at ~32 s/step on an L4 (16 completions, 256 tokens).
+    # this process. HF rollouts measured at ~27-44 s/step on an L4 (16 completions, 256 tokens).
     ap.add_argument("--backend", default="trl", choices=["trl", "unsloth"])
     ap.add_argument("--rollout", default="hf", choices=["hf", "vllm", "unsloth_fast"],
                     help="generation engine for rollouts (vllm = TRL colocated vLLM)")

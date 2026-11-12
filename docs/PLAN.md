@@ -3,7 +3,7 @@
 Nov 3, 2026 · @Vijay
 
 > This is the original plan. Changes required after looking at the real data are listed in
-> [DATA_ANALYSIS.md §2](DATA_ANALYSIS.md#2-required-edits-to-the-plan-planmd). Apply those before building the sets.
+> [DATA_ANALYSIS.md](DATA_ANALYSIS.md#required-edits-to-the-plan-planmd), and they were applied before the sets were built.
 
 ## Goal and success criteria
 

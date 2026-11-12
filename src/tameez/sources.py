@@ -114,8 +114,8 @@ def anudesh():
 def harmful_prompts():
     """IndicAlign-Toxic prompts (first user turn): HH-RLHF-T + Toxic-Matrix, deduplicated."""
     out = []
-    for name, path, max_len in [("hhrlhf", "hhrlhf/hh-rlhf.parquet", 400),
-                                ("toxicmatrix", "toxicmatrix/toxic_prompts_sarvam.parquet", 400)]:
+    for name, path in [("hhrlhf", "hhrlhf/hh-rlhf.parquet"),
+                       ("toxicmatrix", "toxicmatrix/toxic_prompts_sarvam.parquet")]:
         df = pd.read_parquet(RAW / "indic_align_toxic/indicalign-toxic" / path,
                              columns=["doc_id", "eng_Latn", "hin_Deva"])
         for r in tqdm(df.itertuples(), total=len(df), desc=f"load {name}", mininterval=5):

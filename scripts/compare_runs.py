@@ -91,7 +91,7 @@ def main():
     # 2. what each stage changed (Stage 1 -> Stage 2) per model
     L += ["", "## What GRPO changed (Stage 1 → Stage 2), per model", "",
           f"| Metric | {A}: S1 → S2 | {B}: S1 → S2 |", "|---|---|---|"]
-    for label, key, better in METRICS:
+    for label, key, _better in METRICS:
         cells = []
         for s1, s2 in ((a1, a2), (b1, b2)):
             v1, v2 = (get(s1, key) if s1 else None), (get(s2, key) if s2 else None)

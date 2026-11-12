@@ -1,4 +1,4 @@
-"""Score every saved GRPO checkpoint on the 180-prompt mini-set (C_mini) and pick the best. GPU.
+"""Score every saved GRPO checkpoint on the 200-prompt mini-set (C_mini) and pick the best. GPU.
 
 For each <dir>/model/checkpoint-N: merge the LoRA into the Stage 1 model (temporary dir),
 run evaluate.py --mini into <dir>/checkpoints/step-N/, then delete the merged weights.
