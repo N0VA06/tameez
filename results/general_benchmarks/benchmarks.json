@@ -1,0 +1,143 @@
+{
+ "note": "lm-evaluation-harness, chat template, greedy decoding, up to 500 examples per task; MILU is the project's full 14,831-question scorecard.",
+ "models": [
+  {
+   "name": "Tiny Aya Global",
+   "family": "tiny-aya",
+   "rows": [
+    {
+     "label": "XNLI",
+     "lang": "en",
+     "base": 46.4,
+     "tameez": 50.8,
+     "delta": 4.4
+    },
+    {
+     "label": "XNLI",
+     "lang": "hi",
+     "base": 48.2,
+     "tameez": 49.6,
+     "delta": 1.4
+    },
+    {
+     "label": "Belebele",
+     "lang": "en",
+     "base": 80.6,
+     "tameez": 77.4,
+     "delta": -3.2
+    },
+    {
+     "label": "Belebele",
+     "lang": "hi",
+     "base": 55.6,
+     "tameez": 63.0,
+     "delta": 7.4
+    },
+    {
+     "label": "Global-MMLU Lite",
+     "lang": "en",
+     "base": 59.8,
+     "tameez": 57.2,
+     "delta": -2.5
+    },
+    {
+     "label": "Global-MMLU Lite",
+     "lang": "hi",
+     "base": 50.2,
+     "tameez": 50.0,
+     "delta": -0.2
+    },
+    {
+     "label": "GSM8K",
+     "lang": "en",
+     "base": 61.4,
+     "tameez": 52.4,
+     "delta": -9.0
+    },
+    {
+     "label": "IFEval (prompt, strict)",
+     "lang": "en",
+     "base": 57.4,
+     "tameez": 61.2,
+     "delta": 3.8
+    },
+    {
+     "label": "MILU (full)",
+     "lang": "hi",
+     "base": 45.4,
+     "tameez": 43.2,
+     "delta": -2.2
+    }
+   ]
+  },
+  {
+   "name": "Llama-3.2-3B",
+   "family": "llama",
+   "rows": [
+    {
+     "label": "XNLI",
+     "lang": "en",
+     "base": 46.0,
+     "tameez": 47.2,
+     "delta": 1.2
+    },
+    {
+     "label": "XNLI",
+     "lang": "hi",
+     "base": 44.8,
+     "tameez": 45.2,
+     "delta": 0.4
+    },
+    {
+     "label": "Belebele",
+     "lang": "en",
+     "base": 82.8,
+     "tameez": 82.4,
+     "delta": -0.4
+    },
+    {
+     "label": "Belebele",
+     "lang": "hi",
+     "base": 41.8,
+     "tameez": 53.6,
+     "delta": 11.8
+    },
+    {
+     "label": "Global-MMLU Lite",
+     "lang": "en",
+     "base": 58.2,
+     "tameez": 60.5,
+     "delta": 2.2
+    },
+    {
+     "label": "Global-MMLU Lite",
+     "lang": "hi",
+     "base": 35.2,
+     "tameez": 43.2,
+     "delta": 8.0
+    },
+    {
+     "label": "GSM8K",
+     "lang": "en",
+     "base": 78.0,
+     "tameez": 77.4,
+     "delta": -0.6
+    },
+    {
+     "label": "IFEval (prompt, strict)",
+     "lang": "en",
+     "base": 68.8,
+     "tameez": 65.4,
+     "delta": -3.4
+    },
+    {
+     "label": "MILU (full)",
+     "lang": "hi",
+     "base": 38.5,
+     "tameez": 39.5,
+     "delta": 1.0
+    }
+   ]
+  }
+ ]
+}

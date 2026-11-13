@@ -232,6 +232,90 @@ Providers and judged with the same judges ([full report](results/api_comparison.
 Safety is about the same; Command A is better on Hinglish attacks and over-refusal, Tameez keeps to the user's script
 and repeats less abuse, and self-hosting the 3B model costs a few hundred times less per reply on a busy GPU.
 
+## General capability (standard benchmarks)
+
+lm-evaluation-harness 0.4.13 with vLLM, chat template applied, few-shot examples as chat turns, greedy decoding, at most 500 examples per task (Global-MMLU Lite: the same 400 questions in English and Hindi), identical settings for every model. MILU is the project's full 14,831-question scorecard. ⚠️ marks a drop of more than 2 points; at 400–500 examples the standard error is about ±2 points.
+
+![General capability: base vs Tameez](results/general_benchmarks/general_capability.png)
+
+**Tiny Aya Global**
+
+| Benchmark | Language | Base | Tameez | Δ (points) |
+|---|---|---|---|---|
+| XNLI | English | 46.4 | 50.8 | +4.4 |
+| XNLI | Hindi | 48.2 | 49.6 | +1.4 |
+| Belebele | English | 80.6 | 77.4 | -3.2 ⚠️ |
+| Belebele | Hindi | 55.6 | 63.0 | +7.4 |
+| Global-MMLU Lite | English | 59.8 | 57.2 | -2.5 ⚠️ |
+| Global-MMLU Lite | Hindi | 50.2 | 50.0 | -0.2 |
+| GSM8K | English | 61.4 | 52.4 | -9.0 ⚠️ |
+| IFEval (prompt, strict) | English | 57.4 | 61.2 | +3.8 |
+| MILU (full) | Hindi | 45.4 | 43.2 | -2.2 ⚠️ |
+
+**Hindi held up, English slipped, and maths dropped.** Hindi reading comprehension improved (Belebele +7.4) and Hindi knowledge held (Global-MMLU Lite −0.2, MILU −2.2). Instruction following improved (IFEval +3.8). English reading comprehension (−3.2) and knowledge (−2.5) slipped slightly, and **English maths fell clearly (GSM8K 61.4 → 52.4)**, mostly through wrong answers rather than formatting.
+
+<details>
+<summary>Llama-3.2-3B</summary>
+
+| Benchmark | Language | Base | Tameez | Δ (points) |
+|---|---|---|---|---|
+| XNLI | English | 46.0 | 47.2 | +1.2 |
+| XNLI | Hindi | 44.8 | 45.2 | +0.4 |
+| Belebele | English | 82.8 | 82.4 | -0.4 |
+| Belebele | Hindi | 41.8 | 53.6 | +11.8 |
+| Global-MMLU Lite | English | 58.2 | 60.5 | +2.2 |
+| Global-MMLU Lite | Hindi | 35.2 | 43.2 | +8.0 |
+| GSM8K | English | 78.0 | 77.4 | -0.6 |
+| IFEval (prompt, strict) | English | 68.8 | 65.4 | -3.4 ⚠️ |
+| MILU (full) | Hindi | 38.5 | 39.5 | +1.0 |
+
+For Llama, Hindi improved a lot (Belebele +11.8, Global-MMLU Lite +8.0), English held (GSM8K −0.6, Belebele −0.4) and instruction following dropped (IFEval −3.4).
+
+</details>
+
+These numbers compare each base model with its final Tameez model, so they include the Hindi SFT stage as well as GRPO; the SFT models were not benchmarked separately. Raw lm-eval JSON and every sample are in the [`results/general_benchmarks/`](results/general_benchmarks/) (summary JSON, table, scripts) and, with every sample, in the [`tameez-eval-outputs`](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/general_benchmarks) dataset.
+
+## Results by language
+
+All 2,014 safety prompts of the held-out scorecard, split by the script the prompt is written in. Harmful prompts exist
+only in Hindi (1,359) and Hinglish (139); English prompts are all harmless (90: angry users and tricky questions).
+
+### Tiny Aya Global
+
+| Language | Stage | Unsafe replies (harmful) ↓ | Explicit refusals (harmful) ↑ | Wrongly refuses harmless ↓ | Bad-word replies ↓ | Reply in the same script ↑ |
+|---|---|---|---|---|---|---|
+| Hindi (Devanagari) | Base | 3.1% | 43.6% | 0.9% | 1.8% | 99.3% |
+| | Hindi SFT | 16.9% | 36.8% | 0.9% | 1.5% | 99.9% |
+| | **Tameez** | **1.3%** | **80.7%** | 5.3% | **0.2%** | 99.9% |
+| Hinglish (Roman) | Base | 18.7% | 5.0% | 0.9% | 4.9% | 50.2% |
+| | Hindi SFT | 57.6% | 0.0% | 0.0% | 4.9% | 89.4% |
+| | **Tameez** | 29.5% | 10.1% | 0.0% | **1.6%** | **94.3%** |
+| English | Base | – | – | 10.0% | 8.9% | 100% |
+| | Hindi SFT | – | – | 1.1% | 5.6% | 98.9% |
+| | **Tameez** | – | – | 3.3% | 5.6% | 100% |
+
+### Llama-3.2-3B
+
+| Language | Stage | Unsafe replies (harmful) ↓ | Explicit refusals (harmful) ↑ | Wrongly refuses harmless ↓ | Bad-word replies ↓ | Reply in the same script ↑ |
+|---|---|---|---|---|---|---|
+| Hindi (Devanagari) | Base | 8.8% | 34.8% | 1.2% | 2.1% | 99.9% |
+| | Hindi SFT | 14.1% | 30.7% | 3.1% | 2.3% | 100% |
+| | **Tameez** | **2.4%** | **64.1%** | 7.2% | **0.4%** | 100% |
+| Hinglish (Roman) | Base | 21.6% | 5.8% | 1.9% | 3.7% | 97.6% |
+| | Hindi SFT | 30.9% | 6.5% | 0.0% | 5.3% | 98.4% |
+| | **Tameez** | **15.8%** | 8.6% | 2.8% | **0.4%** | 98.0% |
+| English | Base | – | – | 5.6% | 14.4% | 100% |
+| | Hindi SFT | – | – | 7.8% | 10.0% | 100% |
+| | **Tameez** | – | – | 11.1% | 7.8% | 98.9% |
+
+**What the split shows.** Almost all of the safety gain is in Devanagari Hindi (Tiny Aya 16.9% → 1.3% unsafe, refusals
+36.8% → 80.7%). Hinglish halves from its post-SFT peak but stays well above Hindi, and Tiny Aya still refuses only
+10.1% of Hinglish harmful prompts outright. In English (angry users and tricky questions only), Tameez keeps the
+over-refusal low for Tiny Aya (3.3%) but Llama refuses more (11.1%); English bad-word replies stay around 6–8% for both
+because the English angry-user prompts often get their insults quoted back. The MuRIL abuse classifier is left out of
+this table on purpose: it flags ordinary Roman Hinglish as abusive (none of 22 MuRIL-flagged Stage 2 replies on the mini
+set were unsafe by Llama-Guard-3-8B), so its Hinglish numbers are not meaningful.
+
 ## The story in plots (Llama run)
 
 The plots below are from the Llama run; the same plots for Tiny Aya are in [`tiny_aya_run/results/plots/`](tiny_aya_run/results/plots/).
@@ -387,6 +471,90 @@ Details: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) · [docs/REWARDS.md](docs/RE
 - **Model mirrors:** Llama-3.2-3B and Llama-Guard-3-1B were loaded from byte-identical public mirrors while Meta access was pending.
 
 ---
+
+## Hyperparameters
+
+Identical for both base models unless noted. Values are taken from each run's saved `train_log.json`.
+
+### Stage 1: Hindi SFT
+
+| Setting | Value |
+|---|---|
+| Trainer | AlignTune `create_sft_trainer` (TRL backend); AlignTune 0.1.35 (Tiny Aya), 0.1.30 (Llama) |
+| Base model | `CohereLabs/tiny-aya-global` / `unsloth/Llama-3.2-3B-Instruct` |
+| Data | 5,000 rows, stratified sample of Set A (every Hinglish and Aya row, rest Dolly-T / OASST-T); no safety data |
+| Epochs / steps | 1 epoch = 157 optimiser steps |
+| Batch | 4 per device × 8 gradient accumulation = 32 |
+| Learning rate | 2e-4, cosine schedule, 3% warmup |
+| Max sequence length | 768 tokens |
+| LoRA | r = 16, α = 32, dropout 0.05, targets q/k/v/o/gate/up/down projections |
+| Precision | bf16, gradient checkpointing |
+| Checkpoints | every 100 steps (2 kept), loss logged every 10 steps |
+| Seed | 42 |
+| Time on one L4 | 55.3 min (Tiny Aya), 32.5 min (Llama) |
+
+### Stage 2: Tameez GRPO
+
+| Setting | Value |
+|---|---|
+| Trainer | AlignTune `create_rl_trainer(algorithm="grpo", loss_type="dr_grpo")`, TRL 1.7.1 backend, HF `generate` rollouts |
+| Starting point | merged Stage 1 model, new LoRA |
+| Prompt pool | Set B, 4,652 prompts (harmful 1,797 · angry user 1,198 · tricky 411 · benign 1,246) |
+| Steps | 300 |
+| Generations per prompt | 4 |
+| Batch | 8 completions per device (2 prompts × 4) × 2 gradient accumulation = 4 prompts / 16 completions per step |
+| Learning rate | 5e-5 |
+| KL penalty β | 0.04 (reference = Stage 1 model) |
+| Sampling during rollouts | temperature 0.9, top-p 0.95 |
+| Lengths | prompt ≤ 512, completion ≤ 256, sequence ≤ 768 tokens |
+| LoRA | r = 16, α = 32, dropout 0.0, same target modules |
+| Rewards (weight) | no_badwords 2.0 · safe_reply 1.5 · low_toxicity 1.0 · refusal_calibration 1.0 · language_match 0.75 · format 0.5 |
+| Reward models | Llama-Guard-3-1B (`safe_reply`), `textdetox/xlmr-large-toxicity-classifier-v2` (`low_toxicity`) |
+| Precision | bf16, gradient checkpointing |
+| Checkpoints | every 50 steps, all kept |
+| Seed | 42 |
+| Time on one L4 | 214.8 min (Tiny Aya, ≈ 44 s/step), 136.8 min (Llama, ≈ 27 s/step) |
+
+### Checkpoint selection
+
+| Setting | Value |
+|---|---|
+| Test set | 200-prompt mini set (stratified subset of the held-out safety test) |
+| Rule | over-refusal ≤ Stage 1 + 2 points; reply in the right script ≥ 95%; mean reply length ≥ 60% of Stage 1; then lowest unsafe + bad-word rate |
+| Chosen | step 100 (Llama, passes every rule); step 300 (Tiny Aya, fallback: no checkpoint passed the over-refusal cap) |
+
+### Evaluation
+
+| Setting | Value |
+|---|---|
+| Engine | vLLM, greedy decoding (temperature 0), up to 512 new tokens |
+| System prompt | `You are a helpful assistant.` |
+| Safety judge | `meta-llama/Llama-Guard-3-8B` on (prompt, reply), never used in training |
+| Abuse judge | `Hate-speech-CNERG/indic-abusive-allInOne-MuRIL`, threshold 0.5 |
+| Helpfulness judge | `CohereLabs/aya-expanse-8b`, Stage 2 vs Stage 1 on 400 prompts (200 Aya-Eval Hindi + 200 angry-user), judged twice with the order swapped; inconsistent verdicts count as ties; ties count half |
+| Knowledge | MILU Hindi, all 14,831 questions, 0-shot, first-token log-probability over A–D |
+| Intervals | 95% Wilson intervals on every rate |
+| General benchmarks | lm-evaluation-harness 0.4.13, vLLM backend, chat template, few-shot as chat turns, greedy, ≤ 500 examples per (sub)task |
+
+### Hardware and software
+
+| | |
+|---|---|
+| GPU | one NVIDIA L4 (24 GB) on Google Colab for every training and evaluation step |
+| Training stack | AlignTune 0.1.30 / 0.1.35, TRL 1.7.1, PEFT, transformers |
+| Evaluation stack | vLLM, transformers; lm-evaluation-harness 0.4.13 + vLLM 0.33.0 for the general benchmarks |
+
+## Licenses
+
+| What | License | Notes |
+|---|---|---|
+| Tiny Aya Tameez models: `Tiny-Aya-Global-Tameez-GRPO`, `-GRPO-LoRA`, `-GRPO-checkpoints`, `Tiny-Aya-Global-Hindi-SFT`, `-Hindi-SFT-LoRA` | CC-BY-NC 4.0 + Cohere Labs Acceptable Use Policy | derivatives of `CohereLabs/tiny-aya-global`; non-commercial; attribution in each repo's `NOTICE` |
+| Llama Tameez models: `Llama-3.2-3B-Tameez-GRPO`, `-GRPO-LoRA`, `-GRPO-step300`, `-GRPO-checkpoints`, `Llama-3.2-3B-Hindi-SFT`, `-Hindi-SFT-LoRA` | Llama 3.2 Community License + Llama Acceptable Use Policy | names start with "Llama" and show "Built with Llama", as the license requires; commercial use allowed under Meta's terms |
+| `tameez-hindi-safety-data` | mixed, per source (card: `other`) | IndicAlign, MILU: CC BY 4.0 · Aya Dataset, Aya Red-teaming, Aya Evaluation Suite: Apache-2.0 · textdetox: OpenRAIL++ · Setu, IndicSafe: MIT · SurakshaEval: CC BY-NC-SA 4.0 · Hinglish rewrites written by Aya Expanse 8B: CC-BY-NC 4.0 (model license) |
+| `tameez-eval-outputs`, `tameez-training-logs` | mixed (card: `other`) | model replies inherit the license of the model that wrote them (Tiny Aya / Aya Expanse / Command A: CC-BY-NC 4.0; Llama: Llama 3.2 license); prompts inherit their source's license |
+| Tameez playground Space | CC-BY-NC 4.0 | serves both models; the Llama model stays under the Llama 3.2 license |
+| Code (`github.com/N0VA06/tameez`) | **not yet stated** | the repository has no LICENSE file; choose one (for example Apache-2.0 or MIT) before claiming a license |
+| Judges and reward models used, not redistributed | their own licenses | Llama-Guard-3-1B/8B (Llama 3.2 / Llama 3.1 license), XLM-R toxicity classifier (OpenRAIL++), MuRIL abuse classifier (AFL-3.0), Aya Expanse 8B (CC-BY-NC 4.0) |
 
 ## Run it
 
