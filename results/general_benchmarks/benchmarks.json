@@ -1,5 +1,5 @@
 {
- "note": "lm-evaluation-harness, chat template, greedy decoding, up to 500 examples per task; MILU is the project's full 14,831-question scorecard.",
+ "note": "lm-evaluation-harness, chat template, greedy decoding, up to 500 examples per task; MILU is the project's full 14,831-question scorecard. Each stage is benchmarked: base model, Stage 1 Hindi SFT, Stage 2 Tameez (GRPO).",
  "models": [
   {
    "name": "Tiny Aya Global",
@@ -10,65 +10,93 @@
      "lang": "en",
      "base": 46.4,
      "tameez": 50.8,
-     "delta": 4.4
+     "delta": 4.4,
+     "sft": 49.4,
+     "sft_delta": 3.0,
+     "grpo_delta": 1.4
     },
     {
      "label": "XNLI",
      "lang": "hi",
      "base": 48.2,
      "tameez": 49.6,
-     "delta": 1.4
+     "delta": 1.4,
+     "sft": 49.0,
+     "sft_delta": 0.8,
+     "grpo_delta": 0.6
     },
     {
      "label": "Belebele",
      "lang": "en",
      "base": 80.6,
      "tameez": 77.4,
-     "delta": -3.2
+     "delta": -3.2,
+     "sft": 77.8,
+     "sft_delta": -2.8,
+     "grpo_delta": -0.4
     },
     {
      "label": "Belebele",
      "lang": "hi",
      "base": 55.6,
      "tameez": 63.0,
-     "delta": 7.4
+     "delta": 7.4,
+     "sft": 63.2,
+     "sft_delta": 7.6,
+     "grpo_delta": -0.2
     },
     {
      "label": "Global-MMLU Lite",
      "lang": "en",
      "base": 59.8,
      "tameez": 57.2,
-     "delta": -2.5
+     "delta": -2.5,
+     "sft": 58.0,
+     "sft_delta": -1.8,
+     "grpo_delta": -0.7
     },
     {
      "label": "Global-MMLU Lite",
      "lang": "hi",
      "base": 50.2,
      "tameez": 50.0,
-     "delta": -0.2
+     "delta": -0.2,
+     "sft": 49.5,
+     "sft_delta": -0.7,
+     "grpo_delta": 0.5
     },
     {
      "label": "GSM8K",
      "lang": "en",
      "base": 61.4,
      "tameez": 52.4,
-     "delta": -9.0
+     "delta": -9.0,
+     "sft": 52.4,
+     "sft_delta": -9.0,
+     "grpo_delta": 0.0
     },
     {
      "label": "IFEval (prompt, strict)",
      "lang": "en",
      "base": 57.4,
      "tameez": 61.2,
-     "delta": 3.8
+     "delta": 3.8,
+     "sft": 61.2,
+     "sft_delta": 3.8,
+     "grpo_delta": 0.0
     },
     {
      "label": "MILU (full)",
      "lang": "hi",
      "base": 45.4,
      "tameez": 43.2,
-     "delta": -2.2
+     "delta": -2.2,
+     "sft": 41.3,
+     "sft_delta": -4.1,
+     "grpo_delta": 1.9
     }
-   ]
+   ],
+   "summary": "The losses came from the Hindi SFT stage, not GRPO. SFT cost English maths (GSM8K −9.0), English reading (−2.8) and MILU (−4.1) while lifting Hindi reading (+7.6) and instruction following (+3.8). GRPO moved every benchmark by less than 2 points and won back part of MILU (+1.9)."
   },
   {
    "name": "Llama-3.2-3B",
@@ -79,65 +107,93 @@
      "lang": "en",
      "base": 46.0,
      "tameez": 47.2,
-     "delta": 1.2
+     "delta": 1.2,
+     "sft": 48.8,
+     "sft_delta": 2.8,
+     "grpo_delta": -1.6
     },
     {
      "label": "XNLI",
      "lang": "hi",
      "base": 44.8,
      "tameez": 45.2,
-     "delta": 0.4
+     "delta": 0.4,
+     "sft": 45.6,
+     "sft_delta": 0.8,
+     "grpo_delta": -0.4
     },
     {
      "label": "Belebele",
      "lang": "en",
      "base": 82.8,
      "tameez": 82.4,
-     "delta": -0.4
+     "delta": -0.4,
+     "sft": 82.6,
+     "sft_delta": -0.2,
+     "grpo_delta": -0.2
     },
     {
      "label": "Belebele",
      "lang": "hi",
      "base": 41.8,
      "tameez": 53.6,
-     "delta": 11.8
+     "delta": 11.8,
+     "sft": 54.4,
+     "sft_delta": 12.6,
+     "grpo_delta": -0.8
     },
     {
      "label": "Global-MMLU Lite",
      "lang": "en",
      "base": 58.2,
      "tameez": 60.5,
-     "delta": 2.2
+     "delta": 2.2,
+     "sft": 61.0,
+     "sft_delta": 2.8,
+     "grpo_delta": -0.5
     },
     {
      "label": "Global-MMLU Lite",
      "lang": "hi",
      "base": 35.2,
      "tameez": 43.2,
-     "delta": 8.0
+     "delta": 8.0,
+     "sft": 42.0,
+     "sft_delta": 6.8,
+     "grpo_delta": 1.2
     },
     {
      "label": "GSM8K",
      "lang": "en",
      "base": 78.0,
      "tameez": 77.4,
-     "delta": -0.6
+     "delta": -0.6,
+     "sft": 76.4,
+     "sft_delta": -1.6,
+     "grpo_delta": 1.0
     },
     {
      "label": "IFEval (prompt, strict)",
      "lang": "en",
      "base": 68.8,
      "tameez": 65.4,
-     "delta": -3.4
+     "delta": -3.4,
+     "sft": 65.4,
+     "sft_delta": -3.4,
+     "grpo_delta": 0.0
     },
     {
      "label": "MILU (full)",
      "lang": "hi",
      "base": 38.5,
      "tameez": 39.5,
-     "delta": 1.0
+     "delta": 1.0,
+     "sft": 39.3,
+     "sft_delta": 0.8,
+     "grpo_delta": 0.2
     }
-   ]
+   ],
+   "summary": "Hindi SFT brought the big Hindi gains (reading +12.6, knowledge +6.8) and the instruction-following drop (IFEval −3.4). GRPO moved every benchmark by less than 2 points."
   }
  ]
 }

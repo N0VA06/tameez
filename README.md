@@ -234,46 +234,46 @@ and repeats less abuse, and self-hosting the 3B model costs a few hundred times 
 
 ## General capability (standard benchmarks)
 
-lm-evaluation-harness 0.4.13 with vLLM, chat template applied, few-shot examples as chat turns, greedy decoding, at most 500 examples per task (Global-MMLU Lite: the same 400 questions in English and Hindi), identical settings for every model. MILU is the project's full 14,831-question scorecard. ⚠️ marks a drop of more than 2 points; at 400–500 examples the standard error is about ±2 points.
+lm-evaluation-harness 0.4.13 with vLLM, chat template applied, few-shot examples as chat turns, greedy decoding, at most 500 examples per task (Global-MMLU Lite: the same 400 questions in English and Hindi), identical settings for every model. MILU is the project's full 14,831-question scorecard. Every stage is benchmarked (base model, Stage 1 Hindi SFT, Stage 2 Tameez), so each change can be pinned on SFT or on GRPO. ⚠️ marks a drop of more than 2 points; at 400–500 examples the standard error is about ±2 points.
 
-![General capability: base vs Tameez](results/general_benchmarks/general_capability.png)
+![General capability: base → Hindi SFT → Tameez](results/general_benchmarks/general_capability.png)
 
 **Tiny Aya Global**
 
-| Benchmark | Language | Base | Tameez | Δ (points) |
-|---|---|---|---|---|
-| XNLI | English | 46.4 | 50.8 | +4.4 |
-| XNLI | Hindi | 48.2 | 49.6 | +1.4 |
-| Belebele | English | 80.6 | 77.4 | -3.2 ⚠️ |
-| Belebele | Hindi | 55.6 | 63.0 | +7.4 |
-| Global-MMLU Lite | English | 59.8 | 57.2 | -2.5 ⚠️ |
-| Global-MMLU Lite | Hindi | 50.2 | 50.0 | -0.2 |
-| GSM8K | English | 61.4 | 52.4 | -9.0 ⚠️ |
-| IFEval (prompt, strict) | English | 57.4 | 61.2 | +3.8 |
-| MILU (full) | Hindi | 45.4 | 43.2 | -2.2 ⚠️ |
+| Benchmark | Language | Base | Hindi SFT | Tameez | SFT effect | GRPO effect |
+|---|---|---|---|---|---|---|
+| XNLI | English | 46.4 | 49.4 | 50.8 | +3.0 | +1.4 |
+| XNLI | Hindi | 48.2 | 49.0 | 49.6 | +0.8 | +0.6 |
+| Belebele | English | 80.6 | 77.8 | 77.4 | -2.8 ⚠️ | -0.4 |
+| Belebele | Hindi | 55.6 | 63.2 | 63.0 | +7.6 | -0.2 |
+| Global-MMLU Lite | English | 59.8 | 58.0 | 57.2 | -1.8 | -0.7 |
+| Global-MMLU Lite | Hindi | 50.2 | 49.5 | 50.0 | -0.7 | +0.5 |
+| GSM8K | English | 61.4 | 52.4 | 52.4 | -9.0 ⚠️ | +0.0 |
+| IFEval (prompt, strict) | English | 57.4 | 61.2 | 61.2 | +3.8 | +0.0 |
+| MILU (full) | Hindi | 45.4 | 41.3 | 43.2 | -4.1 ⚠️ | +1.9 |
 
-**Hindi held up, English slipped, and maths dropped.** Hindi reading comprehension improved (Belebele +7.4) and Hindi knowledge held (Global-MMLU Lite −0.2, MILU −2.2). Instruction following improved (IFEval +3.8). English reading comprehension (−3.2) and knowledge (−2.5) slipped slightly, and **English maths fell clearly (GSM8K 61.4 → 52.4)**, mostly through wrong answers rather than formatting.
+**The losses came from Hindi SFT, not GRPO.** English maths fell during SFT (GSM8K 61.4 → 52.4; SFT lost 85 questions the base model solved and gained 40) and GRPO left it there. English reading (−2.8) and MILU (−4.1) also dropped at SFT, and GRPO won back about half of the MILU loss (+1.9). The gains came from SFT too: Hindi reading +7.6, instruction following +3.8. GRPO moved every benchmark by less than 2 points. Stage 1 had no English rows and no maths-focused data, so the maths loss is most likely forgetting during SFT; mixing English and maths data into Stage 1 is the obvious fix to try.
 
 <details>
 <summary>Llama-3.2-3B</summary>
 
-| Benchmark | Language | Base | Tameez | Δ (points) |
-|---|---|---|---|---|
-| XNLI | English | 46.0 | 47.2 | +1.2 |
-| XNLI | Hindi | 44.8 | 45.2 | +0.4 |
-| Belebele | English | 82.8 | 82.4 | -0.4 |
-| Belebele | Hindi | 41.8 | 53.6 | +11.8 |
-| Global-MMLU Lite | English | 58.2 | 60.5 | +2.2 |
-| Global-MMLU Lite | Hindi | 35.2 | 43.2 | +8.0 |
-| GSM8K | English | 78.0 | 77.4 | -0.6 |
-| IFEval (prompt, strict) | English | 68.8 | 65.4 | -3.4 ⚠️ |
-| MILU (full) | Hindi | 38.5 | 39.5 | +1.0 |
+| Benchmark | Language | Base | Hindi SFT | Tameez | SFT effect | GRPO effect |
+|---|---|---|---|---|---|---|
+| XNLI | English | 46.0 | 48.8 | 47.2 | +2.8 | -1.6 |
+| XNLI | Hindi | 44.8 | 45.6 | 45.2 | +0.8 | -0.4 |
+| Belebele | English | 82.8 | 82.6 | 82.4 | -0.2 | -0.2 |
+| Belebele | Hindi | 41.8 | 54.4 | 53.6 | +12.6 | -0.8 |
+| Global-MMLU Lite | English | 58.2 | 61.0 | 60.5 | +2.8 | -0.5 |
+| Global-MMLU Lite | Hindi | 35.2 | 42.0 | 43.2 | +6.8 | +1.2 |
+| GSM8K | English | 78.0 | 76.4 | 77.4 | -1.6 | +1.0 |
+| IFEval (prompt, strict) | English | 68.8 | 65.4 | 65.4 | -3.4 ⚠️ | +0.0 |
+| MILU (full) | Hindi | 38.5 | 39.3 | 39.5 | +0.8 | +0.2 |
 
-For Llama, Hindi improved a lot (Belebele +11.8, Global-MMLU Lite +8.0), English held (GSM8K −0.6, Belebele −0.4) and instruction following dropped (IFEval −3.4).
+For Llama, Hindi SFT brought the large Hindi gains (Belebele +12.6, Global-MMLU Lite +6.8) and the instruction-following drop (IFEval −3.4); GRPO again moved every benchmark by less than 2 points (largest: XNLI English −1.6).
 
 </details>
 
-These numbers compare each base model with its final Tameez model, so they include the Hindi SFT stage as well as GRPO; the SFT models were not benchmarked separately. Raw lm-eval JSON and every sample are in the [`results/general_benchmarks/`](results/general_benchmarks/) (summary JSON, table, scripts) and, with every sample, in the [`tameez-eval-outputs`](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/general_benchmarks) dataset.
+SFT and Tameez tie exactly on three rows (Tiny Aya GSM8K and IFEval, Llama IFEval). They are different models with different replies (Tiny Aya: 259 of 500 GSM8K replies differ) whose per-question changes cancel out (Tiny Aya GSM8K: GRPO fixed 21 questions and broke 21). Raw lm-eval JSON for all six models, the full tables (`README.md`) and the scripts are in [`results/general_benchmarks/`](results/general_benchmarks/); every sample is in the [`tameez-eval-outputs`](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/general_benchmarks) dataset.
 
 ## Results by language
 
