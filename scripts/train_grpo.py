@@ -91,6 +91,7 @@ def main():
     ap.add_argument("--exclude", nargs="*", default=[], help="reward names to drop (ablations)")
     ap.add_argument("--sample-rate", type=float, default=0.05, help="fraction of completions logged")
     ap.add_argument("--no-merge", action="store_true")
+    ap.add_argument("--resume-from", help="checkpoint folder (with optimizer.pt, scheduler.pt, rng_state.pth, trainer_state.json) to continue a run that was cut off")
     args = ap.parse_args()
 
     log.info(f"args: {vars(args)}")
@@ -144,6 +145,16 @@ def main():
         seed=SEED,
         **rollout,
     )
+    if args.resume_from:
+        # AlignTune calls TRL's trainer.train() without arguments; pass the checkpoint through TRL's own resume path
+        import trl
+        _train = trl.GRPOTrainer.train
+
+        def _resume(self, *a, **k):
+            k.setdefault("resume_from_checkpoint", args.resume_from)
+            return _train(self, *a, **k)
+        trl.GRPOTrainer.train = _resume
+        log.info(f"resuming from {args.resume_from}")
     t0 = time.time()
     with timed(log, f"GRPO {out} ({args.max_steps} steps; per-reward means logged every step)"):
         result = trainer.train()

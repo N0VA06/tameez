@@ -316,6 +316,37 @@ because the English angry-user prompts often get their insults quoted back. The 
 this table on purpose: it flags ordinary Roman Hinglish as abusive (none of 22 MuRIL-flagged Stage 2 replies on the mini
 set were unsafe by Llama-Guard-3-8B), so its Hinglish numbers are not meaningful.
 
+## Follow-up: a Hinglish-only GRPO run with the 8B judge
+
+Hinglish stayed the weak spot, so we tried the most direct fix we could afford: **150 more GRPO steps on the 1,357 Hinglish prompts of Set B** (450 harmful, 398 harmless, 398 angry-user, 111 tricky), starting from Tiny Aya Tameez, with the same six rewards and weights but **Llama-Guard-3-8B** (4-bit) instead of the 1B model as the `safe_reply` judge. Everything else matches Stage 2 (Dr. GRPO, LoRA r = 16, learning rate 5e-5, β = 0.04, 4 prompts × 4 replies per step); it took 102 minutes on one L4.
+
+Once the 8B judge is a training reward it can no longer grade this model fairly, so every Tiny Aya stage was also scored by **Qwen3Guard-Gen-8B**, which no Tameez run has trained against. A control re-run of the published Stage 2 model in the same environment reproduced its scorecard (Hinglish 28.1% unsafe against 29.5% published), so the comparison below is same day, same code.
+
+| Hinglish red-teaming (139 prompts) | Control (Stage 2 re-run) | Hinglish run | Paired p |
+|---|---|---|---|
+| Unsafe by Llama-Guard-3-8B (the new training judge) | 28.1% | **19.4%** | 0.05 |
+| Unsafe by Qwen3Guard-Gen-8B (independent) | 12.2% | 10.1% | 0.55 |
+| Unsafe or controversial by Qwen3Guard-Gen-8B | 44.6% | 37.4% | 0.08 |
+| Refused outright | 8.6% | **17.3%** | |
+
+| Everything else | Control | Hinglish run |
+|---|---|---|
+| Unsafe, Hindi red-teaming (8B / Qwen3Guard) | 1.3% / 1.5% | 0.9% / 0.6% |
+| Harmless Hinglish prompts refused | 0 of 106 | 0 of 106 |
+| Over-refusal, all harmless / angry users | 3.9% / 9.0% | 5.4% / 12.5% |
+| Hinglish replies in Roman script | 93.9% | 95.5% |
+| MILU Hindi (14,831 questions) | 43.2% (published) | 43.3% |
+| Mean reply length | 393 chars | 351 chars |
+
+| General benchmarks | XNLI EN | XNLI HI | Belebele EN | Belebele HI | Global-MMLU Lite EN | Global-MMLU Lite HI | GSM8K EN | IFEval EN |
+|---|---|---|---|---|---|---|---|---|
+| Tiny Aya Tameez | 50.8 | 49.6 | 77.4 | 63.0 | 57.2 | 50.0 | 52.4 | 61.2 |
+| Hinglish run | 51.4 | 50.0 | 77.6 | 63.2 | 58.0 | 49.5 | 51.2 | 61.8 |
+
+**Reading.** The run cut what its own training judge flags by about a third and doubled outright refusals of harmful Hinglish prompts, but the independent judge sees at most a small change that is not statistically clear (paired McNemar tests on the same 139 prompts). The two judges also disagree a lot on Hinglish: in the control, only 10 of the 46 replies that either judge calls unsafe are flagged by both, so "unsafe in Hinglish" is itself poorly measured. The costs were small but real (more refusals of angry users, replies about 10% shorter); Hindi knowledge did not move, and no general benchmark moved by more than 2 points (largest: GSM8K EN -1.2). We keep the published models as they are and release this run as an experiment: [checkpoints](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO-checkpoints/tree/main/hinglish-followup), [scorecards and judge verdicts](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/tiny_aya/hinglish_followup), [training logs](https://huggingface.co/datasets/IINOVAII/tameez-training-logs/tree/main/tiny_aya/hinglish_followup), [general benchmarks](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/general_benchmarks/results/tiny_aya_hinglish).
+
+Code for the run: `TAMEEZ_GUARD_TRAIN=meta-llama/Llama-Guard-3-8B TAMEEZ_GUARD_4BIT=1 python scripts/train_grpo.py --model IINOVAII/Tiny-Aya-Global-Tameez-GRPO --data data/processed/B_pool_hin.json --max-steps 150 --save-steps 25 --batch-size 4 --grad-accum 4` (`B_pool_hin.json` = the `hin` rows of the RL prompt pool); `scripts/judge_independent.py` for the Qwen3Guard verdicts; `scripts/evaluate.py --skip-milu` for the control; `train_grpo.py --resume-from <checkpoint>` continues a run that was cut off. The Colab driver that ran it all from one kernel cell is in `scripts/colab/`.
+
 ## The story in plots (Llama run)
 
 The plots below are from the Llama run; the same plots for Tiny Aya are in [`tiny_aya_run/results/plots/`](tiny_aya_run/results/plots/).

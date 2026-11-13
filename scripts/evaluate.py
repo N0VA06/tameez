@@ -195,6 +195,7 @@ def main():
     ap.add_argument("--mini", action="store_true", help="C_mini only (180 prompts), skip MILU")
     ap.add_argument("--milu-limit", type=int, default=0, help="sample N MILU questions (0 = all 14,831)")
     ap.add_argument("--max-tokens", type=int, default=512)
+    ap.add_argument("--skip-milu", action="store_true", help="full scorecard without MILU (re-runs, controls)")
     args = ap.parse_args()
 
     outdir = Path(args.out) if args.out else STAGES / args.stage / "eval"
@@ -206,13 +207,14 @@ def main():
     acquire_gpu(log)
 
     gen_path, milu_path = outdir / "generations.json", outdir / "milu.json"
-    need_policy = not gen_path.exists() or (not args.mini and not milu_path.exists())
+    do_milu = not args.mini and not args.skip_milu
+    need_policy = not gen_path.exists() or (do_milu and not milu_path.exists())
     milu = None
     if need_policy:
         model = llm.load(args.model, max_model_len=4096, gpu_memory_utilization=0.85, log=log)
         with timed(log, "1/5 generate replies"):
             gens = step_generate(model, rows, gen_path, args.max_tokens)
-        if not args.mini:
+        if do_milu:
             with timed(log, "2/5 MILU Hindi"):
                 milu = step_milu(model, milu_path, args.milu_limit)
             log.info(f"MILU accuracy: {milu['accuracy']}")

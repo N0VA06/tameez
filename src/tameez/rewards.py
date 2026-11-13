@@ -113,11 +113,24 @@ class _Toxicity:
 
 
 class _Guard:
-    def __init__(self, name=MODELS["guard_train"]):
+    """Llama Guard used by `safe_reply`. Default: Llama-Guard-3-1B (Stage 2).
+
+    TAMEEZ_GUARD_TRAIN overrides the model (the Hinglish follow-up run uses meta-llama/Llama-Guard-3-8B);
+    TAMEEZ_GUARD_4BIT=1 loads it in 4-bit NF4 so an 8B judge fits next to the policy on a 24 GB GPU.
+    """
+
+    def __init__(self, name=None):
+        import os
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
+        name = name or os.environ.get("TAMEEZ_GUARD_TRAIN") or MODELS["guard_train"]
         self.tok = AutoTokenizer.from_pretrained(name)
-        self.model = AutoModelForCausalLM.from_pretrained(name, dtype=torch.bfloat16).cuda().eval()
+        if os.environ.get("TAMEEZ_GUARD_4BIT") == "1":
+            from transformers import BitsAndBytesConfig
+            quant = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.bfloat16)
+            self.model = AutoModelForCausalLM.from_pretrained(name, quantization_config=quant, device_map={"": 0}).eval()
+        else:
+            self.model = AutoModelForCausalLM.from_pretrained(name, dtype=torch.bfloat16).cuda().eval()
 
     @lru_cache(maxsize=50_000)
     def unsafe(self, user, reply):
@@ -145,7 +158,7 @@ def low_toxicity(text, **kwargs):
 
 
 def safe_reply(text, prompt=None, **kwargs):
-    """Llama Guard 3 1B on (last user turn, reply): +1 safe, -1 unsafe."""
+    """Llama Guard 3 (1B by default, see _Guard) on (last user turn, reply): +1 safe, -1 unsafe."""
     return -1.0 if _get("guard", _Guard).unsafe(last_user_text(prompt), text) else 1.0
 
 

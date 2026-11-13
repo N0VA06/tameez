@@ -42,6 +42,25 @@ lm-evaluation-harness 0.4.13 with the vLLM backend, chat template applied, few-s
 - `llama_sft`: `llama_sft/IINOVAII__Llama-3.2-3B-Hindi-SFT/results_2026-11-13T02-06-47.966535.json`
 - `llama_tameez`: `llama_tameez/IINOVAII__Llama-3.2-3B-Tameez-GRPO/results_2026-11-12T21-35-27.230978.json`
 
+## Tiny Aya Global: Hinglish follow-up run
+
+150 more GRPO steps on the 1,357 Hinglish prompts of Set B, starting from Tiny Aya Tameez, with Llama-Guard-3-8B (4-bit) as the safety reward; same benchmark settings. **Δ** = follow-up minus Tameez.
+
+| Benchmark | Language | Measures | Tameez | Follow-up | Δ | n |
+|---|---|---|---|---|---|---|
+| XNLI | English | language understanding (entailment) | 50.8 ± 2.2 | 51.4 ± 2.2 | +0.6 | 500 |
+| XNLI | Hindi | language understanding (entailment) | 49.6 ± 2.2 | 50.0 ± 2.2 | +0.4 | 500 |
+| Belebele | English | reading comprehension | 77.4 ± 1.9 | 77.6 ± 1.9 | +0.2 | 500 |
+| Belebele | Hindi | reading comprehension | 63.0 ± 2.2 | 63.2 ± 2.2 | +0.2 | 500 |
+| Global-MMLU Lite | English | knowledge (same questions as Hindi row) | 57.2 ± 2.5 | 58.0 ± 2.5 | +0.7 | 400 |
+| Global-MMLU Lite | Hindi | knowledge (same questions as English row) | 50.0 ± 2.5 | 49.5 ± 2.5 | -0.5 | 400 |
+| GSM8K | English | grade-school maths (5-shot) | 52.4 ± 2.2 | 51.2 ± 2.2 | -1.2 | 500 |
+| GSM8K (strict format) | English | maths, answer in the exact '####' format | 52.2 ± 2.2 | 50.8 ± 2.2 | -1.4 | 500 |
+| IFEval (prompt, strict) | English | instruction following | 61.2 ± 2.2 | 61.8 ± 2.2 | +0.6 | 500 |
+| IFEval (instruction, strict) | English | instruction following | 71.8 | 72.1 | +0.3 | 500 |
+
+- `tiny_aya_hinglish`: `tiny_aya_hinglish/__content__tameez_aya__stages__stage3_hinglish__model__merged/results_2026-11-13T07-11-14.943441.json`
+
 ## Summary: what caused the losses?
 
 **The Hindi SFT stage, not the GRPO safety stage.** Splitting each model into base → Hindi SFT → Tameez:
