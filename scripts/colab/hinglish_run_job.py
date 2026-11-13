@@ -1,4 +1,4 @@
-# Hinglish follow-up run, driven from ONE kernel cell so the kernel stays busy (Colab prunes idle sessions).
+# Extra Hinglish GRPO run, driven from ONE kernel cell so the kernel stays busy (Colab prunes idle sessions).
 # Prints "PUSHABLE <name> <tgz>" whenever a result is ready; the local watcher downloads and pushes it at once.
 import glob, json, os, subprocess, time
 

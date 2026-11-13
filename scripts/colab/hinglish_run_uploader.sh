@@ -17,13 +17,13 @@ while true; do
     [ -f "$d/trainer_state.json" ] || continue
     n=${d##*-}; [ -f /content/uploaded/ckpt$n ] && continue
     sleep 20   # let the trainer finish writing the folder
-    hf upload $CK "$d" hinglish-followup/step-$n --commit-message "Hinglish follow-up GRPO: checkpoint at step $n (with optimizer state for resuming)" >/dev/null 2>&1 \
+    hf upload $CK "$d" hinglish-followup/step-$n --commit-message "Extra Hinglish GRPO run: checkpoint at step $n (with optimizer state for resuming)" >/dev/null 2>&1 \
       && touch /content/uploaded/ckpt$n && say "uploaded checkpoint $n" || say "checkpoint $n upload failed, will retry"
   done
   if [ $(( $(date +%s) - last_logs )) -ge 600 ] || [ $final = 1 ]; then
     cp /content/hinglish_job.log /content/livelogs/ 2>/dev/null; cp $R/results/logs/*.log /content/livelogs/ 2>/dev/null
     [ -d $OUT/train ] && rm -rf /content/livelogs/train && cp -R $OUT/train /content/livelogs/train
-    hf upload $TL /content/livelogs tiny_aya/hinglish_followup/live --repo-type dataset --commit-message "Hinglish follow-up GRPO: live logs" >/dev/null 2>&1 \
+    hf upload $TL /content/livelogs tiny_aya/hinglish_followup/live --repo-type dataset --commit-message "Extra Hinglish GRPO run: live logs" >/dev/null 2>&1 \
       && say "uploaded live logs" || say "live log upload failed, will retry"
     last_logs=$(date +%s)
   fi
@@ -31,13 +31,13 @@ while true; do
     st=${e%%:*}; dst=${e##*:}
     if [ -f $R/stages/$st/eval/metrics.json ] && [ ! -f /content/uploaded/$st ]; then
       hf upload $EV $R/stages/$st/eval tiny_aya/hinglish_followup/$dst/stages/$st/eval --repo-type dataset \
-        --commit-message "Hinglish follow-up: scorecard outputs for $st" >/dev/null 2>&1 && touch /content/uploaded/$st && say "uploaded $st scorecard"
+        --commit-message "Extra Hinglish run: scorecard outputs for $st" >/dev/null 2>&1 && touch /content/uploaded/$st && say "uploaded $st scorecard"
     fi
   done
   if [ -f $R/results/independent_judge.jsonl.summary.json ] && [ ! -f /content/uploaded/judge ]; then
     mkdir -p /content/judge_up/results && cp $R/results/independent_judge.jsonl* /content/judge_up/results/
     hf upload $EV /content/judge_up tiny_aya/hinglish_followup/independent_judge --repo-type dataset \
-      --commit-message "Hinglish follow-up: Qwen3Guard-Gen-8B verdicts on every Tiny Aya stage" >/dev/null 2>&1 && touch /content/uploaded/judge && say "uploaded judge verdicts"
+      --commit-message "Extra Hinglish run: Qwen3Guard-Gen-8B verdicts on every Tiny Aya stage" >/dev/null 2>&1 && touch /content/uploaded/judge && say "uploaded judge verdicts"
   fi
   [ $final = 1 ] && { say "done"; break; }
   tail -n +$((start_line + 1)) /content/hinglish_job.log 2>/dev/null | grep -qE "ALL_DONE|FAILED (setup|no HF|smoke|training|eval stage3)" && final=1

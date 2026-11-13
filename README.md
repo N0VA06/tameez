@@ -65,6 +65,8 @@ abusive-speech classifier), so a model can't score well just by learning to plea
 | Replies with bad words ↓ | **0.6%** | 0.7% |
 | MILU Hindi knowledge ↑ | **43.2%** | 39.5% |
 | Helpfulness win rate vs its own SFT model (ties count ½) ↑ | **61.5%** | 42.1% |
+| Checkpoint | step 300 of 300 | step 100 of 300 |
+| Selection constraints met | ✗ no: fallback, chosen on the lowest unsafe + bad-word rate after every checkpoint failed the over-refusal cap | ✓ yes: the best checkpoint that passed every rule |
 | License | CC-BY-NC 4.0 (non-commercial) | Llama 3.2 Community License |
 
 **Recommended: Tiny-Aya-Global-Tameez-GRPO.** Both final models are about equally safe overall (3.9% vs 3.7% unsafe),
@@ -316,36 +318,20 @@ because the English angry-user prompts often get their insults quoted back. The 
 this table on purpose: it flags ordinary Roman Hinglish as abusive (none of 22 MuRIL-flagged Stage 2 replies on the mini
 set were unsafe by Llama-Guard-3-8B), so its Hinglish numbers are not meaningful.
 
-## Follow-up: a Hinglish-only GRPO run with the 8B judge
+### Extra Hinglish training with a stronger safety reward
 
-Hinglish stayed the weak spot, so we tried the most direct fix we could afford: **150 more GRPO steps on the 1,357 Hinglish prompts of Set B** (450 harmful, 398 harmless, 398 angry-user, 111 tricky), starting from Tiny Aya Tameez, with the same six rewards and weights but **Llama-Guard-3-8B** (4-bit) instead of the 1B model as the `safe_reply` judge. Everything else matches Stage 2 (Dr. GRPO, LoRA r = 16, learning rate 5e-5, β = 0.04, 4 prompts × 4 replies per step); it took 102 minutes on one L4.
+Hinglish stayed the weak spot, and the training safety reward (Llama-Guard-3-1B) misses about half of what Llama-Guard-3-8B flags, so we gave Tiny Aya Tameez **150 more GRPO steps on only the 1,357 Hinglish prompts of Set B** (450 harmful, 398 harmless, 398 angry-user, 111 tricky), with the same six rewards and weights but Llama-Guard-3-8B (4-bit) as the `safe_reply` judge (102 minutes on one L4). Because Llama-Guard-3-8B was now part of training, these replies were also judged by Qwen3Guard-Gen-8B, which no Tameez run has trained against, and the published Tameez model was re-run in the same environment as the baseline (it reproduced its 29.5% as 28.1%).
 
-Once the 8B judge is a training reward it can no longer grade this model fairly, so every Tiny Aya stage was also scored by **Qwen3Guard-Gen-8B**, which no Tameez run has trained against. A control re-run of the published Stage 2 model in the same environment reproduced its scorecard (Hinglish 28.1% unsafe against 29.5% published), so the comparison below is same day, same code.
-
-| Hinglish red-teaming (139 prompts) | Control (Stage 2 re-run) | Hinglish run | Paired p |
+| Tiny Aya, Hinglish red-teaming (139 prompts) | Tameez (re-run) | + 150 Hinglish steps with the 8B reward | Paired p |
 |---|---|---|---|
-| Unsafe by Llama-Guard-3-8B (the new training judge) | 28.1% | **19.4%** | 0.05 |
-| Unsafe by Qwen3Guard-Gen-8B (independent) | 12.2% | 10.1% | 0.55 |
+| Unsafe by Llama-Guard-3-8B (now also the reward) | 28.1% | **19.4%** | 0.05 |
+| Unsafe by Qwen3Guard-Gen-8B (never trained against) | 12.2% | 10.1% | 0.55 |
 | Unsafe or controversial by Qwen3Guard-Gen-8B | 44.6% | 37.4% | 0.08 |
 | Refused outright | 8.6% | **17.3%** | |
 
-| Everything else | Control | Hinglish run |
-|---|---|---|
-| Unsafe, Hindi red-teaming (8B / Qwen3Guard) | 1.3% / 1.5% | 0.9% / 0.6% |
-| Harmless Hinglish prompts refused | 0 of 106 | 0 of 106 |
-| Over-refusal, all harmless / angry users | 3.9% / 9.0% | 5.4% / 12.5% |
-| Hinglish replies in Roman script | 93.9% | 95.5% |
-| MILU Hindi (14,831 questions) | 43.2% (published) | 43.3% |
-| Mean reply length | 393 chars | 351 chars |
+The extra steps cut what the training judge flags by about a third and doubled outright refusals, but the independent judge sees at most a small change that is not statistically clear (paired McNemar tests on the same prompts). The two judges agree on only 10 of the 46 baseline replies that either calls unsafe, so "unsafe in Hinglish" is itself poorly measured. Side effects were small (angry-user over-refusal 9.0% → 12.5%, replies about 10% shorter, no harmless Hinglish prompt refused, MILU and every general benchmark within 1.4 points), but so was the gain, so the published model stays as it is. A safety classifier built for code-mixed Hindi, and Hinglish training prompts closer to how people type, look like the largest improvements still available.
 
-| General benchmarks | XNLI EN | XNLI HI | Belebele EN | Belebele HI | Global-MMLU Lite EN | Global-MMLU Lite HI | GSM8K EN | IFEval EN |
-|---|---|---|---|---|---|---|---|---|
-| Tiny Aya Tameez | 50.8 | 49.6 | 77.4 | 63.0 | 57.2 | 50.0 | 52.4 | 61.2 |
-| Hinglish run | 51.4 | 50.0 | 77.6 | 63.2 | 58.0 | 49.5 | 51.2 | 61.8 |
-
-**Reading.** The run cut what its own training judge flags by about a third and doubled outright refusals of harmful Hinglish prompts, but the independent judge sees at most a small change that is not statistically clear (paired McNemar tests on the same 139 prompts). The two judges also disagree a lot on Hinglish: in the control, only 10 of the 46 replies that either judge calls unsafe are flagged by both, so "unsafe in Hinglish" is itself poorly measured. The costs were small but real (more refusals of angry users, replies about 10% shorter); Hindi knowledge did not move, and no general benchmark moved by more than 2 points (largest: GSM8K EN -1.2). We keep the published models as they are and release this run as an experiment: [checkpoints](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO-checkpoints/tree/main/hinglish-followup), [scorecards and judge verdicts](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/tiny_aya/hinglish_followup), [training logs](https://huggingface.co/datasets/IINOVAII/tameez-training-logs/tree/main/tiny_aya/hinglish_followup), [general benchmarks](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/general_benchmarks/results/tiny_aya_hinglish).
-
-Code for the run: `TAMEEZ_GUARD_TRAIN=meta-llama/Llama-Guard-3-8B TAMEEZ_GUARD_4BIT=1 python scripts/train_grpo.py --model IINOVAII/Tiny-Aya-Global-Tameez-GRPO --data data/processed/B_pool_hin.json --max-steps 150 --save-steps 25 --batch-size 4 --grad-accum 4` (`B_pool_hin.json` = the `hin` rows of the RL prompt pool); `scripts/judge_independent.py` for the Qwen3Guard verdicts; `scripts/evaluate.py --skip-milu` for the control; `train_grpo.py --resume-from <checkpoint>` continues a run that was cut off. The Colab driver that ran it all from one kernel cell is in `scripts/colab/`.
+The run's [checkpoints](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO-checkpoints/tree/main/hinglish-followup), [replies and judge verdicts](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/tiny_aya/hinglish_followup) and [training logs](https://huggingface.co/datasets/IINOVAII/tameez-training-logs/tree/main/tiny_aya/hinglish_followup) are published next to the main ones; its general benchmarks are in [`results/general_benchmarks/`](results/general_benchmarks/). Reproduce it with `TAMEEZ_GUARD_TRAIN=meta-llama/Llama-Guard-3-8B TAMEEZ_GUARD_4BIT=1 python scripts/train_grpo.py --model IINOVAII/Tiny-Aya-Global-Tameez-GRPO --data data/processed/B_pool_hin.json --out stages/tameez_hinglish --max-steps 150 --save-steps 25 --batch-size 4 --grad-accum 4`, then `scripts/evaluate.py` for the scorecard and `scripts/judge_independent.py` for the Qwen3Guard verdicts; `train_grpo.py --resume-from <checkpoint>` continues a run that was cut off, and the Colab drivers are in `scripts/colab/`.
 
 ## The story in plots (Llama run)
 
@@ -492,9 +478,11 @@ Details: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) · [docs/REWARDS.md](docs/RE
 - **Angry-user over-refusal rose** (8% → 15.5%), and answers got shorter. An Aya Expanse judge preferred Stage 1's
   answers more often than Stage 2's (Stage 2 win rate 42%, mostly ties). Likely fixes are in
   [docs/RESULTS.md](docs/RESULTS.md#what-would-most-likely-fix-the-angry-user-over-refusal).
-- **Llama-Guard-3-1B misses harm in Roman Hinglish:** it flags the same request 2–3× less often than in Devanagari.
-  We worked around it for the data (harmful Hinglish prompts are chosen by their Hindi original), but the training
-  reward is still weaker for Hinglish, which is why Hinglish improved less than Hindi.
+- **Llama-Guard-3-1B misses harmful Hinglish prompts:** it flags the same request 2–3× less often than in Devanagari,
+  so harmful Hinglish prompts are chosen by their Hindi original. On replies it misses about half of what
+  Llama-Guard-3-8B flags in both scripts, and GRPO removed mostly the unsafe replies it could see; training on Hinglish
+  with the 8B judge as the reward helped less than it seemed (see
+  [Extra Hinglish training](#extra-hinglish-training-with-a-stronger-safety-reward)).
 - **MuRIL over-flags Roman Hinglish,** so its "abusive" rate is unreliable for Hinglish replies.
 - **Small compute:** one L4 GPU meant 300 GRPO steps with 4 prompts × 4 replies each (the plan assumed more), and
   5,000 SFT rows instead of 10–20K.

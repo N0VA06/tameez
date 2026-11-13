@@ -29,9 +29,9 @@ METRICS = [
     ("IFEval (prompt, strict)", "ifeval", "prompt_level_strict_acc,none", "English", "instruction following"),
     ("IFEval (instruction, strict)", "ifeval", "inst_level_strict_acc,none", "English", "instruction following"),
 ]
-EXTRA = [("Tiny Aya Global: Hinglish follow-up run", "tiny_aya_tameez", "tiny_aya_hinglish",
+EXTRA = [("Tiny Aya Global: extra Hinglish GRPO run", "tiny_aya_tameez", "tiny_aya_hinglish",
           "150 more GRPO steps on the 1,357 Hinglish prompts of Set B, starting from Tiny Aya Tameez, with Llama-Guard-3-8B "
-          "(4-bit) as the safety reward; same benchmark settings. **Δ** = follow-up minus Tameez.")]
+          "(4-bit) as the safety reward; same benchmark settings. **Δ** = after the extra steps minus Tameez.")]
 # MILU Hindi, measured earlier in the project on all 14,831 questions (scorecard): base, Hindi SFT, Tameez
 MILU = {"tiny_aya": (45.4, 41.3, 43.2), "llama": (38.5, 39.3, 39.5)}
 
@@ -100,12 +100,12 @@ def main(results_dir):
             if run:
                 out.append(f"- `{nm}`: `{Path(run['file']).relative_to(results_dir)}`")
         out.append("")
-    # follow-up runs on top of a final model: (title, reference run, follow-up run, note)
+    # extra runs on top of a final model: (title, reference run, extra run, note)
     for title, ref_name, new_name, note in EXTRA:
         ref, new = load(results_dir, ref_name), load(results_dir, new_name)
         if not (ref and new):
             continue
-        out += [f"## {title}", "", note, "", "| Benchmark | Language | Measures | Tameez | Follow-up | Δ | n |", "|---|---|---|---|---|---|---|"]
+        out += [f"## {title}", "", note, "", "| Benchmark | Language | Measures | Tameez | + 150 Hinglish steps | Δ | n |", "|---|---|---|---|---|---|---|"]
         for label, task, metric, lang, what in METRICS:
             (a, ase), (b, bse) = get(ref, task, metric), get(new, task, metric)
             fmt = lambda v, se: "–" if v is None else (f"{v:.1f} ± {se:.1f}" if se is not None else f"{v:.1f}")

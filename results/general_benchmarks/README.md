@@ -42,11 +42,11 @@ lm-evaluation-harness 0.4.13 with the vLLM backend, chat template applied, few-s
 - `llama_sft`: `llama_sft/IINOVAII__Llama-3.2-3B-Hindi-SFT/results_2026-11-13T02-06-47.966535.json`
 - `llama_tameez`: `llama_tameez/IINOVAII__Llama-3.2-3B-Tameez-GRPO/results_2026-11-12T21-35-27.230978.json`
 
-## Tiny Aya Global: Hinglish follow-up run
+## Tiny Aya Global: extra Hinglish GRPO run
 
-150 more GRPO steps on the 1,357 Hinglish prompts of Set B, starting from Tiny Aya Tameez, with Llama-Guard-3-8B (4-bit) as the safety reward; same benchmark settings. **Δ** = follow-up minus Tameez.
+150 more GRPO steps on the 1,357 Hinglish prompts of Set B, starting from Tiny Aya Tameez, with Llama-Guard-3-8B (4-bit) as the safety reward; same benchmark settings. **Δ** = after the extra steps minus Tameez.
 
-| Benchmark | Language | Measures | Tameez | Follow-up | Δ | n |
+| Benchmark | Language | Measures | Tameez | + 150 Hinglish steps | Δ | n |
 |---|---|---|---|---|---|---|
 | XNLI | English | language understanding (entailment) | 50.8 ± 2.2 | 51.4 ± 2.2 | +0.6 | 500 |
 | XNLI | Hindi | language understanding (entailment) | 49.6 ± 2.2 | 50.0 ± 2.2 | +0.4 | 500 |
