@@ -534,6 +534,17 @@ Identical for both base models unless noted. Values are taken from each run's sa
 | Seed | 42 |
 | Time on one L4 | 214.8 min (Tiny Aya, ≈ 44 s/step), 136.8 min (Llama, ≈ 27 s/step) |
 
+### Data building and audit
+
+| Setting | Value |
+|---|---|
+| Hinglish rewrites | Aya Expanse 8B via vLLM, greedy (temperature 0), up to 1,024 new tokens, system rules + two worked examples |
+| Rewrite acceptance checks | Roman Hinglish script; not a refusal; length 0.5–2× the source; no added greeting; no words copied from the prompt's examples |
+| Harm labels | Llama-Guard-3-1B on the Hindi original; Hinglish rows inherit the label |
+| Split | hash of the row id (stable across runs), seed 42 |
+| Leakage dedup (build) | `datasketch` MinHash, 64 permutations, 5-character shingles, LSH threshold Jaccard ≥ 0.7 against every test prompt |
+| CuratorKIT re-check | `ExactDeduplicator` + `MinHashDeduplicator` (Jaccard ≥ 0.7) within each training set and train-vs-test, `SecretsGate` on every split |
+
 ### Checkpoint selection
 
 | Setting | Value |
