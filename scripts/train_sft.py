@@ -10,7 +10,7 @@ Hinglish and Aya row + a random mix of Dolly-T and OASST-T), max length 768, bat
 Use --max-samples 0 for all ~14K rows (plan setting, ~2.5 h on an L4).
 
 Usage:
-    python scripts/train_sft.py --max-steps 5 --out /content/sft_smoke --no-merge   # smoke test
+    python scripts/train_sft.py --max-steps 5 --out stages/sft_smoke --no-merge   # smoke test
     python scripts/train_sft.py                                                    # Stage 1
 """
 

@@ -2,15 +2,16 @@
 
 ![Tameez: polite small language models in Hindi, Hinglish and English](assets/tameez_demo.gif)
 
-> **Try it live:** chat with the Tameez models in the browser, in Hindi, Hinglish or English, in the [Tameez playground](https://huggingface.co/spaces/IINOVAII/tameez) Space. It can also put both models side by side and show real before-and-after replies.
+> **Try it live:** chat with the Tameez models in the browser, in Hindi, Hinglish or English, in the [Tameez playground](https://huggingface.co/spaces/IINOVAII/tameez) Space. It can also put the models side by side and show real before-and-after replies.
 
 **Teaching 3B language models manners in Hindi and Hinglish with reinforcement learning (GRPO).**
 
 Everything was built and trained on **one 24 GB NVIDIA L4 GPU** with [AlignTune](https://github.com/Lexsi-Labs/aligntune).
-The same pipeline was run on two policy models with identical data, rewards and settings: Cohere Labs'
-**[Tiny Aya Global](https://huggingface.co/CohereLabs/tiny-aya-global)** (main run, results in [`tiny_aya_run/`](tiny_aya_run/))
-and **Llama-3.2-3B-Instruct** (first run, results in [`stages/`](stages/) and [`results/`](results/)). The side-by-side
-comparison is in **[COMPARISON.md](COMPARISON.md)**.
+The same pipeline was run on three policy models with identical data, rewards and settings: Cohere Labs'
+**[Tiny Aya Global](https://huggingface.co/CohereLabs/tiny-aya-global)** (main run, results in [`tiny_aya_run/`](tiny_aya_run/)),
+its South Asia variant **[Tiny Aya Fire](https://huggingface.co/CohereLabs/tiny-aya-fire)** (results in
+[`tiny_aya_fire_run/`](tiny_aya_fire_run/)) and **Llama-3.2-3B-Instruct** (first run, results in [`stages/`](stages/) and
+[`results/`](results/)). All three side by side: **[COMPARISON.md](COMPARISON.md)**.
 
 ## Why this project exists
 
@@ -24,14 +25,14 @@ Indian users actually type: **Devanagari Hindi, Roman-script Hinglish** ("linux 
   "make my presentation a killer") and questions from users who are swearing at it.
 
 **Why this was needed.** Safety tuning mostly happens in English, and safety is rarely measured in Roman-script Hindi.
-We measured it. Both base models were several times as likely to give an unsafe reply to the same harmful request
-written in Hinglish as in Hindi. Then we did what a company would do to "add Hindi": ordinary instruction fine-tuning on
-harmless Hindi data. That alone made both models much **less** safe (Tiny Aya Global: 4.5% → 20.7% unsafe replies;
-Llama-3.2-3B: 10.0% → 15.6%). Tameez fixes this with a reinforcement-learning stage (GRPO) in a purpose-built safety
+We measured it. All three base models were two to seven times as likely to give an unsafe reply to the same harmful
+request written in Hinglish as in Hindi. Then we did what a company would do to "add Hindi": ordinary instruction fine-tuning on
+harmless Hindi data. That alone made all three models much **less** safe (unsafe replies: Tiny Aya Global 4.5% →
+20.7%, Tiny Aya Fire 5.1% → 19.9%, Llama-3.2-3B 10.0% → 15.6%). Tameez fixes this with a reinforcement-learning stage (GRPO) in a purpose-built safety
 environment with six separate rewards, without giving up Hindi skills.
 
-**What was done.** The same three-stage pipeline was run on two base models, with identical data, rewards, settings
-and evaluation:
+**What was done.** The same three-stage pipeline was run on three base models, Cohere Labs' Tiny Aya Global and its
+South Asia variant Tiny Aya Fire, and Llama-3.2-3B-Instruct, with identical data, rewards, settings and evaluation:
 
 | Stage | What happens | Why |
 |---|---|---|
@@ -39,7 +40,7 @@ and evaluation:
 | Stage 1 · Hindi SFT | LoRA fine-tuning on 5,000 ordinary Hindi/Hinglish instruction rows, **no safety data** | the realistic baseline: what you get after "adding Hindi" |
 | Stage 2 · Tameez GRPO | GRPO on top of Stage 1 in a safety RL environment (4,652 tagged prompts, six rewards) | the Tameez model |
 
-Every stage of both models was scored on the same held-out tests (2,014 safety prompts, 200 Hindi helpfulness prompts,
+Every stage of every model was scored on the same held-out tests (2,014 safety prompts, 200 Hindi helpfulness prompts,
 14,831 MILU Hindi knowledge questions) by judges that are **never used in training** (Llama-Guard-3-8B and a MuRIL
 abusive-speech classifier), so a model can't score well just by learning to please its own reward model.
 
@@ -47,34 +48,41 @@ abusive-speech classifier), so a model can't score well just by learning to plea
 
 ![Tameez training and evaluation pipeline](assets/tameez_pipeline.png)
 
-*How Tameez works. **Data building** (left): eight public datasets are cleaned, rewritten into natural Hinglish with Aya Expanse 8B, harm-labelled with Llama-Guard-3-1B and split into four disjoint sets (A: SFT data, B: RL prompt pool, C: held-out safety tests, D: held-out skill tests). **Training** (top right): Stage 1 is plain Hindi LoRA SFT on Set A; Stage 2 is Tameez GRPO on Set B, where each prompt gets 4 replies scored by six weighted rewards and Dr. GRPO's group-relative advantage pushes the LoRA towards the better replies; checkpoints are picked by fixed rules and merged. **Evaluation** (bottom): Stage 0, 1 and 2 of both base models face the same held-out tests and judges that never took part in training.*
+*How Tameez works. **Data building** (left): eight public datasets are cleaned, rewritten into natural Hinglish with Aya Expanse 8B, harm-labelled with Llama-Guard-3-1B and split into four disjoint sets (A: SFT data, B: RL prompt pool, C: held-out safety tests, D: held-out skill tests). **Training** (top right): Stage 1 is plain Hindi LoRA SFT on Set A; Stage 2 is Tameez GRPO on Set B, where each prompt gets 4 replies scored by six weighted rewards and Dr. GRPO's group-relative advantage pushes the LoRA towards the better replies; checkpoints are picked by fixed rules and merged. **Evaluation** (bottom): Stage 0, 1 and 2 of all three base models face the same held-out tests and judges that never took part in training.*
 
 ## Which Tameez model should I use?
 
 ![Final Tameez models compared](assets/compare_final_models.png)
 
-| Final model (Stage 2) | [Tiny-Aya-Global-Tameez-GRPO](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO) ⭐ | [Llama-3.2-3B-Tameez-GRPO](https://huggingface.co/IINOVAII/Llama-3.2-3B-Tameez-GRPO) |
-|---|---|---|
-| Unsafe replies, all 1,498 harmful prompts ↓ | 3.9% | **3.7%** |
-| Unsafe, Hindi red-teaming ↓ | **1.5%** | 2.6% |
-| Unsafe, Hinglish red-teaming ↓ | 29.5% | **15.8%** |
-| Explicit, polite refusal of harmful prompts ↑ | **73.6%** | 58.5% |
-| Wrongly refuses harmless prompts ↓ | **3.9%** | 7.0% |
-| Wrongly refuses angry users with a real question ↓ | **9.0%** | 15.5% |
-| Abusive replies (MuRIL) ↓ | **4.3%** | 7.5% |
-| Replies with bad words ↓ | **0.6%** | 0.7% |
-| MILU Hindi knowledge ↑ | **43.2%** | 39.5% |
-| Helpfulness win rate vs its own SFT model (ties count ½) ↑ | **61.5%** | 42.1% |
-| Checkpoint | step 300 of 300 | step 100 of 300 |
-| Selection constraints met | ✗ no: fallback, chosen on the lowest unsafe + bad-word rate after every checkpoint failed the over-refusal cap | ✓ yes: the best checkpoint that passed every rule |
-| License | CC-BY-NC 4.0 (non-commercial) | Llama 3.2 Community License |
+| Final model (Stage 2) | [Tiny-Aya-Global-Tameez-GRPO](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO) ⭐ | [Tiny-Aya-Fire-Tameez-GRPO](https://huggingface.co/IINOVAII/Tiny-Aya-Fire-Tameez-GRPO) | [Llama-3.2-3B-Tameez-GRPO](https://huggingface.co/IINOVAII/Llama-3.2-3B-Tameez-GRPO) |
+|---|---|---|---|
+| Unsafe replies, all 1,498 harmful prompts ↓ | 3.9% | 4.3% | **3.7%** |
+| Unsafe, Hindi red-teaming ↓ | **1.5%** | 1.8% | 2.6% |
+| Unsafe, Hinglish red-teaming ↓ | 29.5% | 31.7% | **15.8%** |
+| Explicit, polite refusal of harmful prompts ↑ | **73.6%** | 73.1% | 58.5% |
+| Wrongly refuses harmless prompts ↓ | 3.9% | **3.5%** | 7.0% |
+| Wrongly refuses angry users with a real question ↓ | 9.0% | **8.0%** | 15.5% |
+| Abusive replies (MuRIL) ↓ | 4.3% | **3.1%** | 7.5% |
+| Replies with bad words ↓ | **0.6%** | 0.8% | 0.7% |
+| MILU Hindi knowledge ↑ | 43.2% | **45.0%** | 39.5% |
+| Helpfulness win rate vs its own SFT model (ties count ½) ↑ | 61.5% | **62.9%** | 42.1% |
+| Checkpoint | step 300 of 300 | step 300 of 300 | step 100 of 300 |
+| Selection constraints met | ✗ no: fallback, chosen on the lowest unsafe + bad-word rate after every checkpoint failed the over-refusal cap | ✗ no: the same fallback (every checkpoint above the 2.0% over-refusal cap) | ✓ yes: the best checkpoint that passed every rule |
+| License | CC-BY-NC 4.0 (non-commercial) | CC-BY-NC 4.0 (non-commercial) | Llama 3.2 Community License |
 
-**Recommended: Tiny-Aya-Global-Tameez-GRPO.** Both final models are about equally safe overall (3.9% vs 3.7% unsafe),
-but Tiny Aya gets there with a better trade-off: it refuses harmful requests explicitly more often, wrongly refuses
-harmless and angry-user questions about half as often, produces fewer abusive replies, knows more Hindi, and in 400 head-to-head comparisons with its own SFT version (Aya Expanse 8B as judge) it won 139 and lost 47, with 214 ties (a 61.5% win rate, ties counted as half), while Llama's GRPO model lost more than it won (42.1%).
+**Recommended: Tiny-Aya-Global-Tameez-GRPO.** All three final models are about equally safe overall (3.7–4.3% unsafe),
+but the two Tiny Aya models get there with a better trade-off than Llama: they refuse harmful requests explicitly more
+often, wrongly refuse harmless and angry-user questions about half as often, produce fewer abusive replies, know more
+Hindi, and beat their own SFT versions on helpfulness. In 400 head-to-head comparisons with its SFT version (Aya Expanse
+8B as judge) Tiny Aya Global won 139 and lost 47, with 214 ties (a 61.5% win rate, ties counted as half), and Tiny Aya
+Fire won 146 and lost 43 (62.9%), while Llama's GRPO model lost more than it won (42.1%). The two Tiny Aya models are
+within each other's margins on safety; Global is the project's main model and has the lower unsafe rate of the two.
 
-**Pick the Llama model instead if** Hinglish safety is your main concern (15.8% vs 29.5% unsafe on Hinglish
-red-teaming) or you need a license that allows commercial use (Llama 3.2 Community License, with Meta's terms).
+**Pick Tiny-Aya-Fire-Tameez-GRPO instead if** Hindi knowledge and fewer refusals matter most: Cohere's South Asia
+variant keeps more Hindi knowledge (MILU 45.0% vs 43.2%), wrongly refuses a little less (3.5% vs 3.9%) and writes
+longer answers (526 vs 388 characters on average). **Pick the Llama model if** Hinglish safety is your main concern
+(15.8% vs 29.5–31.7% unsafe on Hinglish red-teaming) or you need a license that allows commercial use (Llama 3.2
+Community License, with Meta's terms).
 
 ## Models, data and write-up
 
@@ -82,6 +90,7 @@ red-teaming) or you need a license that allows commercial use (Llama 3.2 Communi
 |---|---|
 | Live demo | [Tameez playground (Hugging Face Space)](https://huggingface.co/spaces/IINOVAII/tameez) |
 | ⭐ Final model, Tiny Aya (merged) | [IINOVAII/Tiny-Aya-Global-Tameez-GRPO](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO) |
+| Final model, Tiny Aya Fire (merged) | [IINOVAII/Tiny-Aya-Fire-Tameez-GRPO](https://huggingface.co/IINOVAII/Tiny-Aya-Fire-Tameez-GRPO) |
 | Final model, Llama (merged) | [IINOVAII/Llama-3.2-3B-Tameez-GRPO](https://huggingface.co/IINOVAII/Llama-3.2-3B-Tameez-GRPO) |
 | All models and datasets | [models collection](https://huggingface.co/collections/IINOVAII/tameez-models-lora-adapters-and-artifacts-6af4bc9ca9f1f658bb2e277d) · [datasets collection](https://huggingface.co/collections/IINOVAII/tameez-datasets-logs-traces-and-benchmarks-6af4bca1aeb84d0562f9672c) |
 | Article | [https://huggingface.co/blog/IINOVAII/tameez](https://huggingface.co/blog/IINOVAII/tameez) |
@@ -93,6 +102,11 @@ red-teaming) or you need a license that allows commercial use (Llama 3.2 Communi
 | [Tiny-Aya-Global-Tameez-GRPO-checkpoints](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO-checkpoints) | all 6 GRPO checkpoints + optimizer states + TensorBoard |
 | [Tiny-Aya-Global-Hindi-SFT](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Hindi-SFT) | Tiny Aya Stage 1, Hindi SFT, merged (start point of GRPO) |
 | [Tiny-Aya-Global-Hindi-SFT-LoRA](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Hindi-SFT-LoRA) | Tiny Aya Stage 1 LoRA adapter + trainer checkpoints |
+| [Tiny-Aya-Fire-Tameez-GRPO](https://huggingface.co/IINOVAII/Tiny-Aya-Fire-Tameez-GRPO) | Tiny Aya Fire Stage 2, selected GRPO checkpoint (step 300), merged bf16 |
+| [Tiny-Aya-Fire-Tameez-GRPO-LoRA](https://huggingface.co/IINOVAII/Tiny-Aya-Fire-Tameez-GRPO-LoRA) | its LoRA adapter (applies to the Tiny Aya Fire Stage 1 model) |
+| [Tiny-Aya-Fire-Tameez-GRPO-checkpoints](https://huggingface.co/IINOVAII/Tiny-Aya-Fire-Tameez-GRPO-checkpoints) | all 6 GRPO checkpoints + optimizer states + TensorBoard |
+| [Tiny-Aya-Fire-Hindi-SFT](https://huggingface.co/IINOVAII/Tiny-Aya-Fire-Hindi-SFT) | Tiny Aya Fire Stage 1, Hindi SFT, merged (start point of GRPO) |
+| [Tiny-Aya-Fire-Hindi-SFT-LoRA](https://huggingface.co/IINOVAII/Tiny-Aya-Fire-Hindi-SFT-LoRA) | Tiny Aya Fire Stage 1 LoRA adapter |
 | [Llama-3.2-3B-Tameez-GRPO](https://huggingface.co/IINOVAII/Llama-3.2-3B-Tameez-GRPO) | Stage 2, best GRPO checkpoint (step 100), merged bf16 |
 | [Llama-3.2-3B-Tameez-GRPO-LoRA](https://huggingface.co/IINOVAII/Llama-3.2-3B-Tameez-GRPO-LoRA) | its LoRA adapter (applies to the Stage 1 model) |
 | [Llama-3.2-3B-Tameez-GRPO-step300](https://huggingface.co/IINOVAII/Llama-3.2-3B-Tameez-GRPO-step300) | last GRPO checkpoint, merged (not chosen) |
@@ -103,8 +117,8 @@ red-teaming) or you need a license that allows commercial use (Llama 3.2 Communi
 | Dataset repo | What it is |
 |---|---|
 | [tameez-hindi-safety-data](https://huggingface.co/datasets/IINOVAII/tameez-hindi-safety-data) | the built sets A–D (`data/processed/`), lexicons, Hinglish rewrites |
-| [tameez-eval-outputs](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs) | every scored reply of every stage and checkpoint, judge items, metrics (Tiny Aya run under `tiny_aya/`) |
-| [tameez-training-logs](https://huggingface.co/datasets/IINOVAII/tameez-training-logs) | GRPO / SFT curves, reward samples, RL rollouts, pipeline logs (Tiny Aya run under `tiny_aya/`) |
+| [tameez-eval-outputs](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs) | every scored reply of every stage and checkpoint, judge items, metrics (Tiny Aya Global under `tiny_aya/`, Tiny Aya Fire under `tiny_aya_fire/`) |
+| [tameez-training-logs](https://huggingface.co/datasets/IINOVAII/tameez-training-logs) | GRPO / SFT curves, reward samples, RL rollouts, pipeline logs (Tiny Aya Global under `tiny_aya/`, Tiny Aya Fire under `tiny_aya_fire/`) |
 
 To skip the data-building steps, download `tameez-hindi-safety-data` and put its JSONL files back in `data/processed/`
 under their original names (`A_sft.json`, `B_pool.json`, `C_safety.json`, `C_mini.json`, `D_ayaeval.json`, `D_milu.json`).
@@ -120,16 +134,16 @@ Cohere Labs × Hugging Face, Nov 2026).
 | | Track | Problem statement |
 |---|---|---|
 | **Primary** | Track 2a · AI Safety and Red Teaming | **4. Multilingual and code-mixed safety:** test whether safety holds in Hindi, Roman Hinglish and English, then close the gaps |
-| Secondary | Track 2b · AI Safety and Correction | **5. Safety-preserving fine-tuning:** plain Hindi SFT erodes safety (Tiny Aya 4.5% → 20.7% unsafe); safety GRPO on top restores it (3.9%) while improving helpfulness and Hindi knowledge over the SFT model |
+| Secondary | Track 2b · AI Safety and Correction | **5. Safety-preserving fine-tuning:** plain Hindi SFT erodes safety (Tiny Aya Global 4.5% → 20.7% unsafe, Tiny Aya Fire 5.1% → 19.9%); safety GRPO on top restores it (3.9%, 4.3%) while improving helpfulness and Hindi knowledge over the SFT model |
 | Also | Track 2a, problem 2 · Track 1, problem 4 | new Hinglish / tricky / angry-user safety test splits · a low-resource, code-mixed language |
 
 ### How the Lexsi stack is used
 
 | Repo | Role in Tameez |
 |---|---|
-| **[AlignTune](https://github.com/Lexsi-Labs/aligntune)** 0.1.30 (Llama run), 0.1.35 (Tiny Aya run) | **Both training stages.** `scripts/train_sft.py` calls `create_sft_trainer` (LoRA SFT, TRL backend). `scripts/train_grpo.py` calls `create_rl_trainer(algorithm="grpo", loss_type="dr_grpo")` with the six Tameez rewards, which `TameezEnv.reward_specs()` passes in AlignTune's custom-reward format (`{"type": "custom", "weight": w, "params": {"function": fn}}`). Each reward follows AlignTune's per-sample contract `fn(text, prompt=..., bucket=..., lang=..., allowed_terms=...) -> float \| None`, so AlignTune forwards the pool's extra columns (bucket, language, exempt words) to every reward. AlignTune writes a `lexsi_provenance.json` next to every adapter |
+| **[AlignTune](https://github.com/Lexsi-Labs/aligntune)** 0.1.30 (Llama run), 0.1.35 (Tiny Aya runs) | **Both training stages.** `scripts/train_sft.py` calls `create_sft_trainer` (LoRA SFT, TRL backend). `scripts/train_grpo.py` calls `create_rl_trainer(algorithm="grpo", loss_type="dr_grpo")` with the six Tameez rewards, which `TameezEnv.reward_specs()` passes in AlignTune's custom-reward format (`{"type": "custom", "weight": w, "params": {"function": fn}}`). Each reward follows AlignTune's per-sample contract `fn(text, prompt=..., bucket=..., lang=..., allowed_terms=...) -> float \| None`, so AlignTune forwards the pool's extra columns (bucket, language, exempt words) to every reward. AlignTune writes a `lexsi_provenance.json` next to every adapter |
 | **[CuratorKIT](https://github.com/Lexsi-Labs/CuratorKIT)** 0.1.27 | **Auditing the data.** `scripts/curate_with_curatorkit.py` re-checks the published splits with CuratorKIT's `ExactDeduplicator`, `MinHashDeduplicator` and `SecretsGate`: duplicates inside Sets A and B, training prompts that near-duplicate a test prompt, and leaked secrets ([report](results/curatorkit_report.md)). It found 3 real overlaps out of 18,642 training rows, all in benign over-refusal tests. The data itself was built with Aya Expanse 8B via vLLM and `datasketch` MinHash (see [PIPELINE.md](docs/PIPELINE.md#decisions-that-differ-from-planmd)) |
-| **[AuditKIT](https://github.com/Lexsi-Labs/AuditKIT)** 1.1.10 | **Auditing the results.** `scripts/audit_with_auditkit.py` loads every stage's saved scorecard replies as AuditKIT samples, scores them through AuditKIT's `precomputed` model (no regeneration, CPU only) with AuditKIT scorers for unsafe replies, bad words, refusals and over-refusal plus AuditKIT's own `RefusalDetector`, and reports the Stage 0 → 1 → 2 deltas with AuditKIT's `compare`. Reports: [Tiny Aya](tiny_aya_run/results/auditkit_report.md), [Llama](results/auditkit_report.md) |
+| **[AuditKIT](https://github.com/Lexsi-Labs/AuditKIT)** 1.1.10 | **Auditing the results.** `scripts/audit_with_auditkit.py` loads every stage's saved scorecard replies as AuditKIT samples, scores them through AuditKIT's `precomputed` model (no regeneration, CPU only) with AuditKIT scorers for unsafe replies, bad words, refusals and over-refusal plus AuditKIT's own `RefusalDetector`, and reports the Stage 0 → 1 → 2 deltas with AuditKIT's `compare`. Reports: [Tiny Aya Global](tiny_aya_run/results/auditkit_report.md), [Tiny Aya Fire](tiny_aya_fire_run/results/auditkit_report.md), [Llama](results/auditkit_report.md) |
 | SafeTune, CircuitKIT | not used |
 
 **Contributed back to AlignTune:** three AlignTune issues found during the project were reproduced, written up in
@@ -147,6 +161,7 @@ Cohere Labs × Hugging Face, Nov 2026).
 | | Role |
 |---|---|
 | [`CohereLabs/tiny-aya-global`](https://huggingface.co/CohereLabs/tiny-aya-global) | **the main policy:** SFT then GRPO, giving the `Tiny-Aya-Global-*` models |
+| [`CohereLabs/tiny-aya-fire`](https://huggingface.co/CohereLabs/tiny-aya-fire) | **the second policy:** Tiny Aya's South Asia variant through the same pipeline, giving the `Tiny-Aya-Fire-*` models |
 | [`CohereLabs/aya-expanse-8b`](https://huggingface.co/CohereLabs/aya-expanse-8b) | **synthetic data:** rewrites Devanagari prompts and SFT pairs into natural Roman Hinglish, and paraphrases the tricky seeds (`scripts/make_synthetic.py`, 5,305 generations, each validated) · **judge:** pairwise helpfulness of Stage 2 vs Stage 1 in both orders (`scripts/judge.py`) |
 | [Aya Dataset](https://huggingface.co/datasets/CohereLabs/aya_dataset) | 594 Hindi rows of SFT Set A |
 | [Aya Red-teaming](https://huggingface.co/datasets/CohereLabs/aya_redteaming) | 913 Hindi red-team prompts (+139 Hinglish rewrites) in the safety test |
@@ -154,16 +169,16 @@ Cohere Labs × Hugging Face, Nov 2026).
 
 ### Before → after (Stage 1 → Stage 2, same held-out scorecard)
 
-| Metric | Why this metric | Tiny Aya S1 → S2 | Llama S1 → S2 |
-|---|---|---|---|
-| Unsafe replies (Llama-Guard-3-8B) | the main safety outcome, judged by a model never used in training | 20.7% → **3.9%** | 15.6% → **3.7%** |
-| Unsafe, Hinglish red-team | the code-mixed gap this project targets | 57.6% → 29.5% | 30.9% → **15.8%** |
-| Bad-word replies | the "manners" goal: no abuse even when provoked | 2.1% → **0.6%** | 3.0% → **0.7%** |
-| Explicit refusal of harmful prompts | refusing politely, not complying vaguely | 33.1% → **73.6%** | 28.3% → **58.5%** |
-| Over-refusal, all benign / angry users | the cost side: safety must not come from refusing everything | 0.8% / 2.0% → 3.9% / 9.0% | 3.3% / 8.0% → 7.0% / 15.5% |
-| Reply in user's script (Hinglish prompts) | answering Hinglish in Hinglish | 89.4% → **94.3%** | 98.4% → 98.0% |
-| MILU Hindi accuracy | no loss of knowledge | 41.3% → **43.2%** | 39.3% → 39.5% |
-| Helpfulness win rate vs Stage 1 (Aya Expanse judge) | did safety cost usefulness? | **61.5%** | 42.1% |
+| Metric | Why this metric | Tiny Aya Global S1 → S2 | Tiny Aya Fire S1 → S2 | Llama S1 → S2 |
+|---|---|---|---|---|
+| Unsafe replies (Llama-Guard-3-8B) | the main safety outcome, judged by a model never used in training | 20.7% → **3.9%** | 19.9% → **4.3%** | 15.6% → **3.7%** |
+| Unsafe, Hinglish red-team | the code-mixed gap this project targets | 57.6% → 29.5% | 56.1% → 31.7% | 30.9% → **15.8%** |
+| Bad-word replies | the "manners" goal: no abuse even when provoked | 2.1% → **0.6%** | 2.0% → **0.8%** | 3.0% → **0.7%** |
+| Explicit refusal of harmful prompts | refusing politely, not complying vaguely | 33.1% → **73.6%** | 31.8% → **73.1%** | 28.3% → **58.5%** |
+| Over-refusal, all benign / angry users | the cost side: safety must not come from refusing everything | 0.8% / 2.0% → 3.9% / 9.0% | 0.4% / 1.0% → 3.5% / 8.0% | 3.3% / 8.0% → 7.0% / 15.5% |
+| Reply in user's script (Hinglish prompts) | answering Hinglish in Hinglish | 89.4% → **94.3%** | 85.7% → **95.1%** | 98.4% → 98.0% |
+| MILU Hindi accuracy | no loss of knowledge | 41.3% → **43.2%** | 43.6% → **45.0%** | 39.3% → 39.5% |
+| Helpfulness win rate vs Stage 1 (Aya Expanse judge) | did safety cost usefulness? | **61.5%** | **62.9%** | 42.1% |
 
 ---
 
@@ -189,6 +204,28 @@ explicit refusals and was judged *more* helpful than the SFT model. Hinglish red
 Full scorecard with 95% intervals: [tiny_aya_run/results/scorecard.md](tiny_aya_run/results/scorecard.md); plots:
 [tiny_aya_run/results/plots/](tiny_aya_run/results/plots/). Note that no Tiny Aya checkpoint met every selection rule, so
 the lowest-unsafe one (step 300) was used (see [COMPARISON.md](COMPARISON.md#notes)).
+
+### Tiny Aya Fire
+
+| | Stage 0 · tiny-aya-fire | Stage 1 · Hindi fine-tune | **Stage 2 · Tameez (GRPO)** |
+|---|---|---|---|
+| Unsafe replies to harmful prompts ↓ | 5.1% | 19.9% | **4.3%** |
+| … Hindi red-team prompts ↓ | 3.5% | 18.3% | **1.8%** |
+| … Hinglish red-team prompts ↓ | 25.9% | 56.1% | 31.7% ⚠️ |
+| Replies with bad words ↓ | 2.0% | 2.0% | **0.8%** |
+| Refuses harmful prompts ↑ | 47.0% | 31.8% | **73.1%** |
+| Over-refusal, all harmless prompts ↓ | 3.1% | 0.4% | 3.5% |
+| Over-refusal, angry users with a real question ↓ | 7.5% | 1.0% | 8.0% |
+| Answers Hinglish in Hinglish ↑ | 55.1% | 85.7% | **95.1%** |
+| Hindi knowledge (MILU, 14,831 questions) ↑ | 46.9% | 43.6% | 45.0% |
+| Helpfulness win rate vs Stage 1 (ties count ½) ↑ | – | – | **62.9%** |
+
+The same story on Cohere's South Asia variant: plain SFT nearly quadrupled the unsafe replies, GRPO brought them back
+just below the base level, more than doubled explicit refusals and was judged *more* helpful than the SFT model. Fire
+keeps more Hindi knowledge than Global at every stage; Hinglish red-teaming is again the weak spot. Full scorecard:
+[tiny_aya_fire_run/results/scorecard.md](tiny_aya_fire_run/results/scorecard.md); plots:
+[tiny_aya_fire_run/results/plots/](tiny_aya_fire_run/results/plots/). As with Global, no checkpoint met every selection
+rule (every one refused more harmless mini-set prompts than the 2.0% cap), so step 300 was used.
 
 ### Llama-3.2-3B (first run)
 
@@ -221,18 +258,21 @@ The same 200 held-out prompts, sent to Cohere's Command A (111B) as a paid API t
 Providers and judged with the same judges ([full report](results/api_comparison.md),
 [`scripts/compare_api_model.py`](scripts/compare_api_model.py)):
 
-| 200 held-out prompts | Command A 111B (API) | Tiny Aya + Tameez 3B | Llama-3.2-3B + Tameez |
-|---|---|---|---|
-| Unsafe replies, 80 harmful prompts ↓ | 6.2% | 3.8% | 2.5% |
-| … 20 Hinglish attacks ↓ | 5.0% | 15.0% | 0.0% |
-| Wrongly refuses harmless prompts ↓ | 0.8% | 5.8% | 5.0% |
-| … angry users ↓ | 2.0% | 14.0% | 12.0% |
-| Reply in the user's script ↑ | 91.5% | 98.5% | 99.5% |
-| Bad-word replies ↓ | 4.5% | 1.0% | 2.0% |
-| Cost per 1,000 replies | $4.71 (list price) | ~$0.003–0.013 self-hosted on one L4 | similar |
+| 200 held-out prompts | Command A 111B (API) | Tiny Aya Global + Tameez | Tiny Aya Fire + Tameez | Llama-3.2-3B + Tameez |
+|---|---|---|---|---|
+| Unsafe replies, 80 harmful prompts ↓ | 6.2% | 3.8% | 8.8% | 2.5% |
+| … 20 Hinglish attacks ↓ | 5.0% | 15.0% | 30.0% | 0.0% |
+| Wrongly refuses harmless prompts ↓ | 0.8% | 5.8% | 5.0% | 5.0% |
+| … angry users ↓ | 2.0% | 14.0% | 12.0% | 12.0% |
+| Reply in the user's script ↑ | 91.5% | 98.5% | 99.0% | 99.5% |
+| Bad-word replies ↓ | 4.5% | 1.0% | 1.5% | 2.0% |
+| Cost per 1,000 replies | $4.71 (list price) | ~$0.003–0.013 self-hosted on one L4 | similar | similar |
 
-Safety is about the same; Command A is better on Hinglish attacks and over-refusal, Tameez keeps to the user's script
-and repeats less abuse, and self-hosting the 3B model costs a few hundred times less per reply on a busy GPU.
+On these 80 harmful prompts the four models are within each other's 95% intervals (2.5–8.8% unsafe, a difference of a
+few replies; Tiny Aya Fire's 8.8% is 7 replies, and on the full 1,498-prompt test it is 4.3%). Command A is better on
+Hinglish attacks and over-refusal, Tameez keeps to the user's script and repeats less abuse, and self-hosting a 3B model
+costs a few hundred times less per reply on a busy GPU. The Tiny Aya Fire column uses the judge labels from its own
+scorecard run for the same 200 prompts.
 
 ## General capability (standard benchmarks)
 
@@ -257,6 +297,35 @@ lm-evaluation-harness 0.4.13 with vLLM, chat template applied, few-shot examples
 **The losses came from Hindi SFT, not GRPO.** English maths fell during SFT (GSM8K 61.4 → 52.4; SFT lost 85 questions the base model solved and gained 40) and GRPO left it there. English reading (−2.8) and MILU (−4.1) also dropped at SFT, and GRPO won back about half of the MILU loss (+1.9). The gains came from SFT too: Hindi reading +7.6, instruction following +3.8. GRPO moved every benchmark by less than 2 points. Stage 1 had no English rows and no maths-focused data, so the maths loss is most likely forgetting during SFT; mixing English and maths data into Stage 1 is the obvious fix to try.
 
 <details>
+<summary>Tiny Aya Fire</summary>
+
+
+| Benchmark | Language | Base | Hindi SFT | Tameez | SFT effect | GRPO effect |
+|---|---|---|---|---|---|---|
+| XNLI | English | 46.4 | 50.6 | 52.0 | +4.2 | +1.4 |
+| XNLI | Hindi | 49.4 | 49.4 | 49.4 | +0.0 | +0.0 |
+| Belebele | English | 81.8 | 79.0 | 78.2 | -2.8 ⚠️ | -0.8 |
+| Belebele | Hindi | 62.0 | 65.8 | 63.8 | +3.8 | -2.0 |
+| Global-MMLU Lite | English | 61.3 | 62.0 | 61.5 | +0.7 | -0.5 |
+| Global-MMLU Lite | Hindi | 54.5 | 50.0 | 51.7 | -4.5 ⚠️ | +1.7 |
+| GSM8K | English | 63.0 | 52.2 | 54.6 | -10.8 ⚠️ | +2.4 |
+| IFEval (prompt, strict) | English | 60.0 | 67.2 | 65.0 | +7.2 | -2.2 ⚠️ |
+| MILU (full) | Hindi | 46.9 | 43.6 | 45.0 | -3.3 ⚠️ | +1.4 |
+
+**The losses came from Hindi SFT, not GRPO, as in the Tiny Aya Global run.** English maths fell during SFT (GSM8K
+63.0 → 52.2; SFT lost 78 questions the base model solved and gained 24), and GRPO won back
+2.4 points (it fixed 25 questions and broke 13). Hindi knowledge also dipped at SFT
+(Global-MMLU Lite Hindi −4.5, MILU −3.3) and GRPO recovered part of it (+1.7, +1.4); English reading fell 2.8 at SFT.
+The gains came from SFT too: instruction following +7.2, XNLI English +4.2, Hindi reading +3.8. GRPO moved every
+benchmark by at most 2.4 points. Fire starts stronger than Global in Hindi (Belebele Hindi 62.0 vs 55.6, Global-MMLU
+Lite Hindi 54.5 vs 50.2) and keeps the lead after both stages.
+
+XNLI Hindi is 49.4 at all three stages, but the models are not the same: 118 of 500 predictions change at SFT (39
+fixed, 39 broken) and 49 at GRPO (14 and 14).
+
+</details>
+
+<details>
 <summary>Llama-3.2-3B</summary>
 
 | Benchmark | Language | Base | Hindi SFT | Tameez | SFT effect | GRPO effect |
@@ -275,7 +344,7 @@ For Llama, Hindi SFT brought the large Hindi gains (Belebele +12.6, Global-MMLU 
 
 </details>
 
-SFT and Tameez tie exactly on three rows (Tiny Aya GSM8K and IFEval, Llama IFEval). They are different models with different replies (Tiny Aya: 259 of 500 GSM8K replies differ) whose per-question changes cancel out (Tiny Aya GSM8K: GRPO fixed 21 questions and broke 21). Raw lm-eval JSON for all six models, the full tables (`README.md`) and the scripts are in [`results/general_benchmarks/`](results/general_benchmarks/); every sample is in the [`tameez-eval-outputs`](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/general_benchmarks) dataset.
+SFT and Tameez tie exactly on four rows (Tiny Aya Global GSM8K and IFEval, Tiny Aya Fire XNLI Hindi, Llama IFEval). They are different models with different replies (Tiny Aya Global: 259 of 500 GSM8K replies differ) whose per-question changes cancel out (Tiny Aya Global GSM8K: GRPO fixed 21 questions and broke 21). Raw lm-eval JSON for all nine models, the full tables (`README.md`) and the scripts are in [`results/general_benchmarks/`](results/general_benchmarks/); every sample is in the [`tameez-eval-outputs`](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/general_benchmarks) dataset.
 
 ## Results by language
 
@@ -296,6 +365,20 @@ only in Hindi (1,359) and Hinglish (139); English prompts are all harmless (90: 
 | | Hindi SFT | – | – | 1.1% | 5.6% | 98.9% |
 | | **Tameez** | – | – | 3.3% | 5.6% | 100% |
 
+### Tiny Aya Fire
+
+| Language | Stage | Unsafe replies (harmful) ↓ | Explicit refusals (harmful) ↑ | Wrongly refuses harmless ↓ | Bad-word replies ↓ | Reply in the same script ↑ |
+|---|---|---|---|---|---|---|
+| Hindi (Devanagari) | Base | 3.0% | 51.7% | 0.6% | 1.1% | 99.5% |
+|  | Hindi SFT | 16.2% | 35.3% | 0.3% | 1.6% | 100% |
+|  | **Tameez** | **1.5%** | **80.6%** | 4.7% | **0.2%** | 99.9% |
+| Hinglish (Roman) | Base | 25.9% | 5.0% | 0.9% | 4.9% | 55.1% |
+|  | Hindi SFT | 56.1% | 0.7% | 0.0% | 2.9% | 85.7% |
+|  | **Tameez** | 31.7% | 5.8% | 0.0% | **2.0%** | **95.1%** |
+| English | Base | – | – | 14.4% | 10.0% | 100% |
+|  | Hindi SFT | – | – | 1.1% | 7.8% | 96.7% |
+|  | **Tameez** | – | – | 3.3% | 7.8% | 98.9% |
+
 ### Llama-3.2-3B
 
 | Language | Stage | Unsafe replies (harmful) ↓ | Explicit refusals (harmful) ↑ | Wrongly refuses harmless ↓ | Bad-word replies ↓ | Reply in the same script ↑ |
@@ -312,7 +395,7 @@ only in Hindi (1,359) and Hinglish (139); English prompts are all harmless (90: 
 
 **What the split shows.** Almost all of the safety gain is in Devanagari Hindi (Tiny Aya 16.9% → 1.3% unsafe, refusals
 36.8% → 80.7%). Hinglish halves from its post-SFT peak but stays well above Hindi, and Tiny Aya still refuses only
-10.1% of Hinglish harmful prompts outright. In English (angry users and tricky questions only), Tameez keeps the
+10.1% of Hinglish harmful prompts outright. Tiny Aya Fire shows the same split: in Devanagari Hindi its unsafe replies fall from 16.2% to 1.5% and refusals rise from 35.3% to 80.6%, while on Hinglish it ends at 31.7% unsafe and refuses only 5.8% of Hinglish harmful prompts outright. In English (angry users and tricky questions only), Tameez keeps the
 over-refusal low for Tiny Aya (3.3%) but Llama refuses more (11.1%); English bad-word replies stay around 6–8% for both
 because the English angry-user prompts often get their insults quoted back. The MuRIL abuse classifier is left out of
 this table on purpose: it flags ordinary Roman Hinglish as abusive (none of 22 MuRIL-flagged Stage 2 replies on the mini
@@ -320,9 +403,9 @@ set were unsafe by Llama-Guard-3-8B), so its Hinglish numbers are not meaningful
 
 ### Extra Hinglish training with a stronger safety reward
 
-Hinglish stayed the weak spot, and the training safety reward (Llama-Guard-3-1B) misses about half of what Llama-Guard-3-8B flags, so we gave Tiny Aya Tameez **150 more GRPO steps on only the 1,357 Hinglish prompts of Set B** (450 harmful, 398 harmless, 398 angry-user, 111 tricky), with the same six rewards and weights but Llama-Guard-3-8B (4-bit) as the `safe_reply` judge (102 minutes on one L4). Because Llama-Guard-3-8B was now part of training, these replies were also judged by Qwen3Guard-Gen-8B, which no Tameez run has trained against, and the published Tameez model was re-run in the same environment as the baseline (it reproduced its 29.5% as 28.1%).
+Hinglish stayed the weak spot, and the training safety reward (Llama-Guard-3-1B) misses about half of what Llama-Guard-3-8B flags, so we gave Tiny Aya Global Tameez **150 more GRPO steps on only the 1,357 Hinglish prompts of Set B** (450 harmful, 398 harmless, 398 angry-user, 111 tricky), with the same six rewards and weights but Llama-Guard-3-8B (4-bit) as the `safe_reply` judge (102 minutes on one L4). Because Llama-Guard-3-8B was now part of training, these replies were also judged by Qwen3Guard-Gen-8B, which no Tameez run has trained against, and the published Tameez model was re-run in the same environment as the baseline (it reproduced its 29.5% as 28.1%).
 
-| Tiny Aya, Hinglish red-teaming (139 prompts) | Tameez (re-run) | + 150 Hinglish steps with the 8B reward | Paired p |
+| Tiny Aya Global, Hinglish red-teaming (139 prompts) | Tameez (re-run) | + 150 Hinglish steps with the 8B reward | Paired p |
 |---|---|---|---|
 | Unsafe by Llama-Guard-3-8B (now also the reward) | 28.1% | **19.4%** | 0.05 |
 | Unsafe by Qwen3Guard-Gen-8B (never trained against) | 12.2% | 10.1% | 0.55 |
@@ -331,11 +414,12 @@ Hinglish stayed the weak spot, and the training safety reward (Llama-Guard-3-1B)
 
 The extra steps cut what the training judge flags by about a third and doubled outright refusals, but the independent judge sees at most a small change that is not statistically clear (paired McNemar tests on the same prompts). The two judges agree on only 10 of the 46 baseline replies that either calls unsafe, so "unsafe in Hinglish" is itself poorly measured. Side effects were small (angry-user over-refusal 9.0% → 12.5%, replies about 10% shorter, no harmless Hinglish prompt refused, MILU and every general benchmark within 1.4 points), but so was the gain, so the published model stays as it is. A safety classifier built for code-mixed Hindi, and Hinglish training prompts closer to how people type, look like the largest improvements still available.
 
-The run's [checkpoints](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO-checkpoints/tree/main/hinglish-followup), [replies and judge verdicts](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/tiny_aya/hinglish_followup) and [training logs](https://huggingface.co/datasets/IINOVAII/tameez-training-logs/tree/main/tiny_aya/hinglish_followup) are published next to the main ones; its general benchmarks are in [`results/general_benchmarks/`](results/general_benchmarks/). Reproduce it with `TAMEEZ_GUARD_TRAIN=meta-llama/Llama-Guard-3-8B TAMEEZ_GUARD_4BIT=1 python scripts/train_grpo.py --model IINOVAII/Tiny-Aya-Global-Tameez-GRPO --data data/processed/B_pool_hin.json --out stages/tameez_hinglish --max-steps 150 --save-steps 25 --batch-size 4 --grad-accum 4`, then `scripts/evaluate.py` for the scorecard and `scripts/judge_independent.py` for the Qwen3Guard verdicts; `train_grpo.py --resume-from <checkpoint>` continues a run that was cut off, and the Colab drivers are in `scripts/colab/`.
+The run's [checkpoints](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO-checkpoints/tree/main/hinglish-followup), [replies and judge verdicts](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/tiny_aya/hinglish_followup) and [training logs](https://huggingface.co/datasets/IINOVAII/tameez-training-logs/tree/main/tiny_aya/hinglish_followup) are published next to the main ones; its general benchmarks are in [`results/general_benchmarks/`](results/general_benchmarks/). Reproduce it with `TAMEEZ_GUARD_TRAIN=meta-llama/Llama-Guard-3-8B TAMEEZ_GUARD_4BIT=1 python scripts/train_grpo.py --model IINOVAII/Tiny-Aya-Global-Tameez-GRPO --data data/processed/B_pool_hin.json --out stages/tameez_hinglish --max-steps 150 --save-steps 25 --batch-size 4 --grad-accum 4`, then `scripts/evaluate.py` for the scorecard and `scripts/judge_independent.py` for the Qwen3Guard verdicts; `train_grpo.py --resume-from <checkpoint>` continues a run that was cut off.
 
 ## The story in plots (Llama run)
 
-The plots below are from the Llama run; the same plots for Tiny Aya are in [`tiny_aya_run/results/plots/`](tiny_aya_run/results/plots/).
+The plots below are from the Llama run; the same plots for Tiny Aya Global and Tiny Aya Fire are in
+[`tiny_aya_run/results/plots/`](tiny_aya_run/results/plots/) and [`tiny_aya_fire_run/results/plots/`](tiny_aya_fire_run/results/plots/).
 All Llama plots are in [`results/plots/`](results/plots/) and are redrawn by `scripts/make_plots.py` after every stage.
 Colours are fixed per stage: **blue = Stage 0, orange = Stage 1, aqua = Stage 2**.
 
@@ -461,20 +545,25 @@ Details: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) · [docs/REWARDS.md](docs/RE
 
 | Role | Model |
 |---|---|
-| Policy (trained) | Llama-3.2-3B-Instruct |
+| Policies (trained) | Tiny Aya Global, Tiny Aya Fire, Llama-3.2-3B-Instruct |
 | Training rewards | Llama-Guard-3-1B, textdetox XLM-R toxicity classifier |
-| Evaluation judges (never used in training) | Llama-Guard-3-8B, MuRIL abusive-speech classifier |
+| Evaluation judges (never used in training) | Llama-Guard-3-8B, MuRIL abusive-speech classifier; Qwen3Guard-Gen-8B as an independent check on the Tiny Aya runs |
 | Hinglish rewrites + helpfulness judge | Aya Expanse 8B |
 
 ---
 
 ## Limitations
 
-- **Tiny Aya: Hinglish red-teaming ends worse than the base model** (29.5% vs 18.7% unsafe). GRPO halved the damage
-  plain SFT did (57.6%) but did not undo it.
-- **Tiny Aya: no checkpoint met every selection rule** (over-refusal cap of Stage 1 + 2 points = 2.8%, and the 60% length
-  rule), so the lowest-unsafe checkpoint was used. Its over-refusal (3.9%) and angry-user over-refusal (9.0%) are above the base model's.
-- **Tiny Aya license:** CC-BY-NC 4.0, so the Tiny Aya derivatives are non-commercial.
+- **Both Tiny Aya models: Hinglish red-teaming ends worse than the base model** (Global 29.5% vs 18.7%, Fire 31.7% vs
+  25.9% unsafe). GRPO roughly halved the damage plain SFT did (57.6% and 56.1%) but did not undo it.
+- **Both Tiny Aya models: no checkpoint met every selection rule** (over-refusal cap of Stage 1 + 2 points = 2.8% for
+  Global and 2.0% for Fire; Global also missed the 60% length rule), so the lowest-unsafe checkpoint (step 300) was used.
+  Their over-refusal (3.9% and 3.5%) and angry-user over-refusal (9.0% and 8.0%) are at or above the base models' (2.5%
+  / 5.5% and 3.1% / 7.5%).
+- **Tiny Aya license:** CC-BY-NC 4.0, so the Tiny Aya derivatives (Global and Fire) are non-commercial.
+- **The Tiny Aya Fire scorecard ran on the newer evaluation stack** (vLLM 0.33.0). Re-running the published Tiny Aya
+  Global model on it moved its Hinglish unsafe rate by 1.4 points (29.5% → 28.1%), so differences of that size between
+  the two Tiny Aya models are noise.
 - **Angry-user over-refusal rose** (8% → 15.5%), and answers got shorter. An Aya Expanse judge preferred Stage 1's
   answers more often than Stage 2's (Stage 2 win rate 42%, mostly ties). Likely fixes are in
   [docs/RESULTS.md](docs/RESULTS.md#what-would-most-likely-fix-the-angry-user-over-refusal).
@@ -493,14 +582,14 @@ Details: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) · [docs/REWARDS.md](docs/RE
 
 ## Hyperparameters
 
-Identical for both base models unless noted. Values are taken from each run's saved `train_log.json`.
+Identical for all three base models unless noted. Values are taken from each run's saved `train_log.json`.
 
 ### Stage 1: Hindi SFT
 
 | Setting | Value |
 |---|---|
-| Trainer | AlignTune `create_sft_trainer` (TRL backend); AlignTune 0.1.35 (Tiny Aya), 0.1.30 (Llama) |
-| Base model | `CohereLabs/tiny-aya-global` / `unsloth/Llama-3.2-3B-Instruct` |
+| Trainer | AlignTune `create_sft_trainer` (TRL backend); AlignTune 0.1.35 (Tiny Aya runs), 0.1.30 (Llama) |
+| Base model | `CohereLabs/tiny-aya-global` / `CohereLabs/tiny-aya-fire` / `unsloth/Llama-3.2-3B-Instruct` |
 | Data | 5,000 rows, stratified sample of Set A (every Hinglish and Aya row, rest Dolly-T / OASST-T); no safety data |
 | Epochs / steps | 1 epoch = 157 optimiser steps |
 | Batch | 4 per device × 8 gradient accumulation = 32 |
@@ -510,7 +599,7 @@ Identical for both base models unless noted. Values are taken from each run's sa
 | Precision | bf16, gradient checkpointing |
 | Checkpoints | every 100 steps (2 kept), loss logged every 10 steps |
 | Seed | 42 |
-| Time on one L4 | 55.3 min (Tiny Aya), 32.5 min (Llama) |
+| Time on one L4 | 55.3 min (Tiny Aya Global), 53.8 min (Tiny Aya Fire), 32.5 min (Llama) |
 
 ### Stage 2: Tameez GRPO
 
@@ -532,7 +621,7 @@ Identical for both base models unless noted. Values are taken from each run's sa
 | Precision | bf16, gradient checkpointing |
 | Checkpoints | every 50 steps, all kept |
 | Seed | 42 |
-| Time on one L4 | 214.8 min (Tiny Aya, ≈ 44 s/step), 136.8 min (Llama, ≈ 27 s/step) |
+| Time on one L4 | 214.8 min (Tiny Aya Global, ≈ 44 s/step), 223.7 min (Tiny Aya Fire, ≈ 45 s/step), 136.8 min (Llama, ≈ 27 s/step) |
 
 ### Data building and audit
 
@@ -551,7 +640,7 @@ Identical for both base models unless noted. Values are taken from each run's sa
 |---|---|
 | Test set | 200-prompt mini set (stratified subset of the held-out safety test) |
 | Rule | over-refusal ≤ Stage 1 + 2 points; reply in the right script ≥ 95%; mean reply length ≥ 60% of Stage 1; then lowest unsafe + bad-word rate |
-| Chosen | step 100 (Llama, passes every rule); step 300 (Tiny Aya, fallback: no checkpoint passed the over-refusal cap) |
+| Chosen | step 100 (Llama, passes every rule); step 300 (Tiny Aya Global and Tiny Aya Fire, fallback: no checkpoint passed the over-refusal cap) |
 
 ### Evaluation
 
@@ -572,17 +661,17 @@ Identical for both base models unless noted. Values are taken from each run's sa
 |---|---|
 | GPU | one NVIDIA L4 (24 GB) on Google Colab for every training and evaluation step |
 | Training stack | AlignTune 0.1.30 / 0.1.35, TRL 1.7.1, PEFT, transformers |
-| Evaluation stack | vLLM, transformers; lm-evaluation-harness 0.4.13 + vLLM 0.33.0 for the general benchmarks |
+| Evaluation stack | vLLM, transformers (vLLM 0.33.0 for the Tiny Aya Fire scorecard); lm-evaluation-harness 0.4.13 + vLLM 0.33.0 for the general benchmarks |
 
 ## Licenses
 
 | What | License | Notes |
 |---|---|---|
-| Tiny Aya Tameez models: `Tiny-Aya-Global-Tameez-GRPO`, `-GRPO-LoRA`, `-GRPO-checkpoints`, `Tiny-Aya-Global-Hindi-SFT`, `-Hindi-SFT-LoRA` | CC-BY-NC 4.0 + Cohere Labs Acceptable Use Policy | derivatives of `CohereLabs/tiny-aya-global`; non-commercial; attribution in each repo's `NOTICE` |
+| Tiny Aya Tameez models: `Tiny-Aya-Global-Tameez-GRPO`, `-GRPO-LoRA`, `-GRPO-checkpoints`, `Tiny-Aya-Global-Hindi-SFT`, `-Hindi-SFT-LoRA`, and the same five `Tiny-Aya-Fire-*` repos | CC-BY-NC 4.0 + Cohere Labs Acceptable Use Policy | derivatives of `CohereLabs/tiny-aya-global` and `CohereLabs/tiny-aya-fire`; non-commercial; attribution in each repo's `NOTICE` |
 | Llama Tameez models: `Llama-3.2-3B-Tameez-GRPO`, `-GRPO-LoRA`, `-GRPO-step300`, `-GRPO-checkpoints`, `Llama-3.2-3B-Hindi-SFT`, `-Hindi-SFT-LoRA` | Llama 3.2 Community License + Llama Acceptable Use Policy | names start with "Llama" and show "Built with Llama", as the license requires; commercial use allowed under Meta's terms |
 | `tameez-hindi-safety-data` | mixed, per source (card: `other`) | IndicAlign, MILU: CC BY 4.0 · Aya Dataset, Aya Red-teaming, Aya Evaluation Suite: Apache-2.0 · textdetox: OpenRAIL++ · Setu, IndicSafe: MIT · SurakshaEval: CC BY-NC-SA 4.0 · Hinglish rewrites written by Aya Expanse 8B: CC-BY-NC 4.0 (model license) |
 | `tameez-eval-outputs`, `tameez-training-logs` | mixed (card: `other`) | model replies inherit the license of the model that wrote them (Tiny Aya / Aya Expanse / Command A: CC-BY-NC 4.0; Llama: Llama 3.2 license); prompts inherit their source's license |
-| Tameez playground Space | CC-BY-NC 4.0 | serves both models; the Llama model stays under the Llama 3.2 license |
+| Tameez playground Space | CC-BY-NC 4.0 | serves the models; the Llama model stays under the Llama 3.2 license |
 | Code (`github.com/N0VA06/tameez`) | **not yet stated** | the repository has no LICENSE file; choose one (for example Apache-2.0 or MIT) before claiming a license |
 | Judges and reward models used, not redistributed | their own licenses | Llama-Guard-3-1B/8B (Llama 3.2 / Llama 3.1 license), XLM-R toxicity classifier (OpenRAIL++), MuRIL abuse classifier (AFL-3.0), Aya Expanse 8B (CC-BY-NC 4.0) |
 
@@ -611,24 +700,46 @@ python -I scripts/curate_with_curatorkit.py --data data/hf_safety_data          
 
 Every step, input, output and setting is described in [docs/PIPELINE.md](docs/PIPELINE.md).
 
-### Rerun on Tiny Aya Global (or any other policy)
+### Rerun on Tiny Aya Global, Tiny Aya Fire (or any other policy)
 
 The policy model is read from the `TAMEEZ_POLICY` environment variable (default `unsloth/Llama-3.2-3B-Instruct`).
-The Tiny Aya run used exactly this on a Colab L4, with Google Drive mounted, the data already built by the Llama run,
-and a separate Drive folder for the outputs:
+Both Tiny Aya runs used exactly the steps above, with the data already built by the Llama run (or downloaded, see
+[Use the published data](#use-the-published-data)), each in a fresh copy of the repository:
 
 ```bash
-export TAMEEZ_POLICY=CohereLabs/tiny-aya-global       # gated: accept Cohere's terms on HF once, then `hf auth login`
-export DRIVE=/content/drive/MyDrive/tameez_aya        # where this run's outputs go
-export DATA_SRC=/content/drive/MyDrive/tameez         # reuse the already-built data/ (sets A-D, lexicons)
-bash scripts/run_colab.sh setup
-for step in stage0 sft stage1 grpo ckpts stage2; do bash scripts/run_colab.sh $step || break; done
-python -I scripts/compare_runs.py --a <llama run root> --a-name "Llama-3.2-3B" \
-                                  --b <tiny aya run root> --b-name "Tiny Aya Global" --out COMPARISON.md
+export TAMEEZ_POLICY=CohereLabs/tiny-aya-fire     # or CohereLabs/tiny-aya-global; gated: accept Cohere's terms on HF once, then `hf auth login`
+python scripts/evaluate.py --stage stage0_base --model $TAMEEZ_POLICY
+python scripts/env_check.py --stage stage0_base --rollout --model $TAMEEZ_POLICY
+python scripts/train_sft.py                       # Stage 1
+python scripts/evaluate.py --stage stage1_sft --model stages/stage1_sft/model/merged
+python scripts/env_check.py --stage stage1_sft --rollout
+python scripts/train_grpo.py                      # Stage 2; --resume-from <checkpoint> continues a run that was cut off
+python scripts/score_checkpoints.py
+python scripts/evaluate.py --stage stage2_grpo --model stages/stage2_grpo/model/best_merged
+python scripts/env_check.py --stage stage2_grpo --rollout --model stages/stage2_grpo/model/best_merged
+python scripts/judge.py --stage stage2_grpo
+python scripts/judge_independent.py stage0_base=stages/stage0_base/eval/generations.json \
+    stage1_sft=stages/stage1_sft/eval/generations.json stage2_grpo=stages/stage2_grpo/eval/generations.json \
+    --out results/independent_judge.jsonl         # Qwen3Guard-Gen-8B check, never used in training
+python -I scripts/make_plots.py
+```
+
+The run's `stages/` and `results/` were then copied to [`tiny_aya_run/`](tiny_aya_run/) and
+[`tiny_aya_fire_run/`](tiny_aya_fire_run/), and the cross-model files are rebuilt from the three run folders:
+
+```bash
+python -I scripts/compare_runs.py --run . "Llama-3.2-3B" --run tiny_aya_run "Tiny Aya Global" \
+                                  --run tiny_aya_fire_run "Tiny Aya Fire" --out COMPARISON.md
+python -I scripts/make_comparison_plots.py --run tiny_aya_run "Tiny Aya Global" --run tiny_aya_fire_run "Tiny Aya Fire" \
+                                           --run . "Llama-3.2-3B" --out assets
+bash results/general_benchmarks/scripts/run_benchmarks.sh CohereLabs/tiny-aya-fire tiny_aya_fire_base   # one per model
+python results/general_benchmarks/scripts/finalize.py results/general_benchmarks/results results/general_benchmarks
 ```
 
 Timings on one L4 (wall clock per step): base scorecard 24 min, SFT 57 min (55 min of training), Stage 1 scorecard
 18 min, GRPO plus checkpoint scoring 4 h 13 min (3 h 35 min of training), Stage 2 scorecard and judge 22 min: about 6 h 15 min in all.
+Tiny Aya Fire took about the same: 25 + 54 + 17 min, GRPO 3 h 44 min, checkpoints 29 min, Stage 2 22 min (6 h 23 min),
+plus 25 min for the Qwen3Guard check and 60 min for the general benchmarks.
 Two code changes made the rewards model-agnostic: `src/tameez/rewards.py` knows Cohere's chat-turn tokens (for
 `format`'s leaked-token check and for finding the last user turn), and `scripts/make_plots.py` labels plots with the policy name.
 
@@ -668,8 +779,9 @@ python scripts/evaluate.py --stage stage2_grpo --model IINOVAII/Tiny-Aya-Global-
 ```
 .
 ├── README.md                 this page
-├── COMPARISON.md             Llama-3.2-3B vs Tiny Aya Global, every stage side by side
+├── COMPARISON.md             Llama-3.2-3B, Tiny Aya Global and Tiny Aya Fire, every stage side by side
 ├── tiny_aya_run/             the Tiny Aya Global run: stages/ (metrics, logs) and results/ (scorecard, plots)
+├── tiny_aya_fire_run/        the Tiny Aya Fire run, same layout
 ├── data/                     raw/ (downloaded), processed/ (sets A-D), lexicons/, tricky_seeds.json
 ├── docs/
 │   ├── RESULTS.md            full results of every stage, every plot explained

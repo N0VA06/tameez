@@ -253,8 +253,12 @@ def cmd_report(a):
     for label, _ in metrics(next(iter(systems.values()))):
         L.append(f"| {label} | " + " | ".join(cols[n][label] for n in names) + " |")
     agree = ", ".join(f"{k} {100 * v:.1f}%" for k, v in meta["guard_agreement_with_stored_labels"].items())
+    later = meta.get("labels_from_scorecard", [])
+    note = (f" {', '.join(later)} {'was' if len(later) == 1 else 'were'} added later and use{'s' if len(later) == 1 else ''} "
+            f"the labels from {'its' if len(later) == 1 else 'their'} own scorecard run (the same judges, run on the training GPU) for these 200 prompts, "
+            "since the re-judged labels of the other Tameez models matched their stored ones that closely.") if later else ""
     L += ["", f"Judge check: the local Llama-Guard-3-8B verdicts on the Tameez replies agree with the labels in the "
-          f"original scorecard for {agree} of prompts.", "",
+          f"original scorecard for {agree} of prompts.{note}", "",
           "## Cost", "",
           "| | Cost per 1,000 replies | How it is measured |", "|---|---|---|",
           f"| {names[0]} | **${per_k_api:.2f}** | {len(ok)} replies used {tin:,} input and {tout:,} output tokens "

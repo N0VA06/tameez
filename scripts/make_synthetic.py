@@ -16,7 +16,7 @@ Tasks (rows chosen by the stable roles in tameez.sources):
 
 Output: data/processed/cache/synthetic.json (JSON Lines). Re-running skips finished items.
 
-Usage (Colab GPU):
+Usage (GPU):
     python scripts/make_synthetic.py                     # all tasks
     python scripts/make_synthetic.py --tasks seed_para --limit 20
 """

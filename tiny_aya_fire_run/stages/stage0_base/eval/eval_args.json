@@ -1,0 +1,9 @@
+{
+  "stage": "stage0_base",
+  "out": null,
+  "model": "CohereLabs/tiny-aya-fire",
+  "mini": false,
+  "milu_limit": 0,
+  "max_tokens": 512,
+  "skip_milu": false
+}

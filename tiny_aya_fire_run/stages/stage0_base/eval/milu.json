@@ -1,0 +1,18 @@
+{
+  "accuracy": 0.4694,
+  "n": 14831,
+  "ci95": [
+    0.4614,
+    0.4775
+  ],
+  "by_domain": {
+    "Arts & Humanities": 0.4228,
+    "Engineering & Tech": 0.4862,
+    "Science": 0.4947,
+    "Social Sciences": 0.4322,
+    "Environmental Sciences": 0.4862,
+    "Health & Medicine": 0.6321,
+    "Business Studies": 0.4571,
+    "Law & Governance": 0.456
+  }
+}

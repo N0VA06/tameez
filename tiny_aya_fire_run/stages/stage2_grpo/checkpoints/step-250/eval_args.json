@@ -1,0 +1,9 @@
+{
+  "stage": "step-250",
+  "out": "/content/tameez_fire/stages/stage2_grpo/checkpoints/step-250",
+  "model": "/content/tameez_fire/stages/stage2_grpo/model/_tmp_merged",
+  "mini": true,
+  "milu_limit": 0,
+  "max_tokens": 512,
+  "skip_milu": false
+}

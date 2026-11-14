@@ -1,0 +1,150 @@
+{
+  "stage": "step-150",
+  "unsafe_rate": {
+    "all_harmful": {
+      "rate": 0.0875,
+      "n": 80,
+      "ci95": [
+        0.043,
+        0.1698
+      ]
+    },
+    "aya_redteaming": {
+      "rate": 0.0,
+      "n": 30,
+      "ci95": [
+        0.0,
+        0.1135
+      ]
+    },
+    "aya_redteaming_hinglish": {
+      "rate": 0.35,
+      "n": 20,
+      "ci95": [
+        0.1812,
+        0.5671
+      ]
+    },
+    "indicsafe": {
+      "rate": 0.0,
+      "n": 30,
+      "ci95": [
+        0.0,
+        0.1135
+      ]
+    },
+    "suraksha": {
+      "rate": null,
+      "n": 0,
+      "ci95": [
+        null,
+        null
+      ]
+    }
+  },
+  "badword_rate": {
+    "rate": 0.015,
+    "n": 200,
+    "ci95": [
+      0.0051,
+      0.0432
+    ]
+  },
+  "badword_rate_angry": {
+    "rate": 0.0,
+    "n": 50,
+    "ci95": [
+      0.0,
+      0.0714
+    ]
+  },
+  "toxicity": {
+    "abusive_rate": {
+      "rate": 0.04,
+      "n": 200,
+      "ci95": [
+        0.0204,
+        0.0769
+      ]
+    },
+    "mean_p_abusive": 0.0888
+  },
+  "over_refusal": {
+    "all_benign": {
+      "rate": 0.0667,
+      "n": 120,
+      "ci95": [
+        0.0342,
+        0.1261
+      ]
+    },
+    "indicsafe": {
+      "rate": 0.0,
+      "n": 40,
+      "ci95": [
+        0.0,
+        0.0876
+      ]
+    },
+    "tricky_test": {
+      "rate": 0.0,
+      "n": 30,
+      "ci95": [
+        0.0,
+        0.1135
+      ]
+    },
+    "angry_test": {
+      "rate": 0.16,
+      "n": 50,
+      "ci95": [
+        0.0834,
+        0.2851
+      ]
+    }
+  },
+  "refusal_on_harmful": {
+    "rate": 0.625,
+    "n": 80,
+    "ci95": [
+      0.5155,
+      0.7231
+    ]
+  },
+  "script_fidelity": {
+    "all": {
+      "rate": 0.99,
+      "n": 200,
+      "ci95": [
+        0.9643,
+        0.9973
+      ]
+    },
+    "hi": {
+      "rate": 1.0,
+      "n": 131,
+      "ci95": [
+        0.9715,
+        1.0
+      ]
+    },
+    "hin": {
+      "rate": 0.9778,
+      "n": 45,
+      "ci95": [
+        0.8843,
+        0.9961
+      ]
+    },
+    "en": {
+      "rate": 0.9583,
+      "n": 24,
+      "ci95": [
+        0.7976,
+        0.9926
+      ]
+    }
+  },
+  "milu_hindi_accuracy": null,
+  "mean_reply_chars": 710.4
+}

@@ -22,6 +22,26 @@ lm-evaluation-harness 0.4.13 with the vLLM backend, chat template applied, few-s
 - `tiny_aya_sft`: `tiny_aya_sft/IINOVAII__Tiny-Aya-Global-Hindi-SFT/results_2026-11-13T01-54-04.231493.json`
 - `tiny_aya_tameez`: `tiny_aya_tameez/IINOVAII__Tiny-Aya-Global-Tameez-GRPO/results_2026-11-12T21-12-29.398181.json`
 
+## Tiny Aya Fire
+
+| Benchmark | Language | Measures | Base | Hindi SFT | Tameez | SFT effect | GRPO effect | Total | n |
+|---|---|---|---|---|---|---|---|---|---|
+| XNLI | English | language understanding (entailment) | 46.4 ± 2.2 | 50.6 ± 2.2 | 52.0 ± 2.2 | +4.2 | +1.4 | +5.6 | 500 |
+| XNLI | Hindi | language understanding (entailment) | 49.4 ± 2.2 | 49.4 ± 2.2 | 49.4 ± 2.2 | +0.0 | +0.0 | +0.0 | 500 |
+| Belebele | English | reading comprehension | 81.8 ± 1.7 | 79.0 ± 1.8 | 78.2 ± 1.8 | -2.8 ⚠️ | -0.8 | -3.6 ⚠️ | 500 |
+| Belebele | Hindi | reading comprehension | 62.0 ± 2.2 | 65.8 ± 2.1 | 63.8 ± 2.2 | +3.8 | -2.0 | +1.8 | 500 |
+| Global-MMLU Lite | English | knowledge (same questions as Hindi row) | 61.3 ± 2.4 | 62.0 ± 2.4 | 61.5 ± 2.4 | +0.7 | -0.5 | +0.2 | 400 |
+| Global-MMLU Lite | Hindi | knowledge (same questions as English row) | 54.5 ± 2.5 | 50.0 ± 2.5 | 51.7 ± 2.5 | -4.5 ⚠️ | +1.7 | -2.8 ⚠️ | 400 |
+| GSM8K | English | grade-school maths (5-shot) | 63.0 ± 2.2 | 52.2 ± 2.2 | 54.6 ± 2.2 | -10.8 ⚠️ | +2.4 | -8.4 ⚠️ | 500 |
+| GSM8K (strict format) | English | maths, answer in the exact '####' format | 63.0 ± 2.2 | 52.2 ± 2.2 | 54.4 ± 2.2 | -10.8 ⚠️ | +2.2 | -8.6 ⚠️ | 500 |
+| IFEval (prompt, strict) | English | instruction following | 60.0 ± 2.2 | 67.2 ± 2.1 | 65.0 ± 2.1 | +7.2 | -2.2 ⚠️ | +5.0 | 500 |
+| IFEval (instruction, strict) | English | instruction following | 71.2 | 75.5 | 74.6 | +4.4 | -0.9 | +3.5 | 500 |
+| MILU (project scorecard) | Hindi | knowledge (14,831 questions) | 46.9 | 43.6 | 45.0 | -3.3 ⚠️ | +1.4 | -1.9 | 14831 |
+
+- `tiny_aya_fire_base`: `tiny_aya_fire_base/CohereLabs__tiny-aya-fire/results_2026-11-13T22-11-21.088882.json`
+- `tiny_aya_fire_sft`: `tiny_aya_fire_sft/__content__tameez_fire__stages__stage1_sft__model__merged/results_2026-11-13T22-30-42.325661.json`
+- `tiny_aya_fire_tameez`: `tiny_aya_fire_tameez/__content__tameez_fire__stages__stage2_grpo__model__best_merged/results_2026-11-13T22-50-10.942450.json`
+
 ## Llama-3.2-3B-Instruct
 
 | Benchmark | Language | Measures | Base | Hindi SFT | Tameez | SFT effect | GRPO effect | Total | n |
@@ -65,20 +85,28 @@ lm-evaluation-harness 0.4.13 with the vLLM backend, chat template applied, few-s
 
 **The Hindi SFT stage, not the GRPO safety stage.** Splitting each model into base → Hindi SFT → Tameez:
 
-- **GRPO did not measurably cost general capability.** On both models, every GRPO effect is within ±2 points
-  (largest: Tiny Aya MILU +1.9, Llama XNLI English −1.6), which is inside the noise of a 400–500 question sample.
+- **GRPO did not measurably cost general capability.** On all three models, every GRPO effect is within ±2.4 points
+  (largest: Tiny Aya Fire GSM8K +2.4 and IFEval −2.2, Tiny Aya Global MILU +1.9, Llama XNLI English −1.6), which is
+  inside the noise of a 400–500 question sample.
 - **Tiny Aya Global: the losses are SFT.** English maths fell during SFT (GSM8K 61.4 → 52.4, −9.0; SFT lost 85
   questions the base model solved and gained 40) and stayed there after GRPO. English reading (Belebele −2.8 of −3.2)
   and MILU Hindi knowledge (−4.1) also dropped at SFT; GRPO won back half of the MILU loss (+1.9). The gains came from
   SFT too: Hindi reading +7.6, IFEval +3.8, XNLI English +3.0.
+- **Tiny Aya Fire: the same picture.** English maths fell during SFT (GSM8K 63.0 → 52.2, −10.8; SFT lost 78 questions
+  the base model solved and gained 24) and GRPO won back 2.4 points (fixed 25, broke 13). Hindi knowledge dipped at SFT
+  (Global-MMLU Lite Hindi −4.5, MILU −3.3) and GRPO recovered part of it (+1.7, +1.4); English reading fell 2.8 at SFT.
+  SFT also lifted instruction following (IFEval +7.2), XNLI English (+4.2) and Hindi reading (+3.8). Fire starts
+  stronger than Global in Hindi (Belebele Hindi 62.0 vs 55.6, Global-MMLU Lite Hindi 54.5 vs 50.2) and keeps the lead
+  after both stages.
 - **Llama-3.2-3B: gains and the one loss are SFT.** SFT brought the large Hindi gains (Belebele +12.6, Global-MMLU Lite
   +6.8) and the instruction-following drop (IFEval −3.4 prompt-level, −2.7 instruction-level). GSM8K and English
   reading stayed flat through both stages.
 
-**Identical scores are not identical models.** SFT and Tameez tie exactly on three rows (Tiny Aya GSM8K and IFEval,
-Llama IFEval). The weights differ, each run's `config.model_args` names the right repository, scores recompute from the
+**Identical scores are not identical models.** SFT and Tameez tie exactly on four rows (Tiny Aya Global GSM8K and
+IFEval, Tiny Aya Fire XNLI Hindi, Llama IFEval). The weights differ, each run's `config.model_args` names the right repository, scores recompute from the
 saved samples, and the replies differ (Tiny Aya: 259 of 500 GSM8K replies, 447 of 500 IFEval replies). The per-question
-changes cancel out: on Tiny Aya GSM8K, GRPO fixed 21 questions and broke 21.
+changes cancel out: on Tiny Aya Global GSM8K, GRPO fixed 21 questions and broke 21; Tiny Aya Fire scores 49.4 on XNLI
+Hindi at all three stages, but 118 of 500 predictions change at SFT (39 fixed, 39 broken) and 49 at GRPO (14 and 14).
 
 **What this suggests.** Stage 1 was trained on 5,000 rows of general Hindi and Hinglish instruction data (translated
 Dolly and OASST, Aya Dataset), with no English rows and no maths-focused data, so the English maths loss is most likely
@@ -88,4 +116,5 @@ Stage 1 is the obvious next thing to try; GRPO itself can stay as it is.
 **Caveats.** At 400–500 examples per task the standard error of each score is about ±2 points, so a stage difference
 under ~4 points is not significant; GSM8K −9.0 is well outside that, and MILU uses all 14,831 questions (standard error
 about ±0.4). The SFT models were run on 13 Nov 2026 in a fresh Colab L4 session with the same pinned stack (vLLM 0.33.0,
-transformers 5.20.2, torch 2.14.0, lm-eval 0.4.13) and the same seeds as the base and Tameez runs.
+transformers 5.20.2, torch 2.14.0, lm-eval 0.4.13) and the same seeds as the base and Tameez runs; the three Tiny Aya
+Fire models were run the same day, right after their training, with the same stack and seeds.

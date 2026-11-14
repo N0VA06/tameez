@@ -34,6 +34,6 @@ It is passed as `{"type": "custom", "weight": w, "params": {"function": fn}}`.
 
 ## Ablations
 
-`run_colab.sh ablations` runs the plan's two reward ablations for 150 steps each: `train_grpo.py --exclude refusal_calibration`
-(expect over-refusal to rise) and `--exclude language_match` (expect drift to English). `--exclude` takes any reward name.
+The plan's two reward ablations are GRPO runs with one reward left out: `train_grpo.py --out stages/ablations/<name>
+--exclude refusal_calibration` (expect over-refusal to rise) and `--exclude language_match` (expect drift to English). `--exclude` takes any reward name.
 Results land in `stages/ablations/<name>/` and appear as extra columns in `results/scorecard.md`.

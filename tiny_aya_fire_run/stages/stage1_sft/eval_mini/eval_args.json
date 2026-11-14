@@ -1,0 +1,9 @@
+{
+  "stage": "stage1_sft-mini",
+  "out": "/content/tameez_fire/stages/stage1_sft/eval_mini",
+  "model": "/content/tameez_fire/stages/stage1_sft/model/merged",
+  "mini": true,
+  "milu_limit": 0,
+  "max_tokens": 512,
+  "skip_milu": false
+}

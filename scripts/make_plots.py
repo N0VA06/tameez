@@ -48,13 +48,30 @@ plt.rcParams.update({
 
 # ---------------------------------------------------------------- data
 
+MILU_DOMAIN_N = {"Arts & Humanities": 2862, "Engineering & Tech": 2248, "Science": 2624, "Social Sciences": 1777,
+                 "Environmental Sciences": 1993, "Health & Medicine": 598, "Business Studies": 1422, "Law & Governance": 1307}
+
+
+def exact_rates(d):
+    """metrics.json stores rates to 4 decimals; recompute each {rate, n} as count / n (and MILU from its per-domain
+    counts) so a label never shows a double-rounded value (e.g. 44/139 = 31.65% must print as 31.7%, not 31.6%)."""
+    if isinstance(d, dict):
+        d = {k: exact_rates(v) for k, v in d.items()}
+        if isinstance(d.get("rate"), float) and d.get("n"):
+            d["rate"] = round(d["rate"] * d["n"]) / d["n"]
+        dom = d.get("by_domain")
+        if isinstance(d.get("accuracy"), float) and isinstance(dom, dict) and set(dom) == set(MILU_DOMAIN_N):
+            d["accuracy"] = sum(round(a * MILU_DOMAIN_N[k]) for k, a in dom.items()) / sum(MILU_DOMAIN_N.values())
+    return d
+
+
 def load_stages():
     stages = {}
     for s in STAGE_ORDER:
         m = STAGES / s / "eval" / "metrics.json"
         if not m.exists():
             continue
-        d = {"metrics": json.loads(m.read_text())}
+        d = {"metrics": exact_rates(json.loads(m.read_text()))}
         for key, path in {"scored": "eval/scored.json", "rollout": "env/rollout_report.json", "milu": "eval/milu.json"}.items():
             p = STAGES / s / path
             if p.exists():

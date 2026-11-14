@@ -14,6 +14,7 @@ from pathlib import Path
 
 STAGES = [
     ("Tiny Aya Global", "tiny_aya", "tiny_aya_base", "tiny_aya_sft", "tiny_aya_tameez"),
+    ("Tiny Aya Fire", "tiny_aya_fire", "tiny_aya_fire_base", "tiny_aya_fire_sft", "tiny_aya_fire_tameez"),
     ("Llama-3.2-3B-Instruct", "llama", "llama_base", "llama_sft", "llama_tameez"),
 ]
 # (label, task key in results, metric key, language, what it measures)
@@ -33,7 +34,7 @@ EXTRA = [("Tiny Aya Global: extra Hinglish GRPO run", "tiny_aya_tameez", "tiny_a
           "150 more GRPO steps on the 1,357 Hinglish prompts of Set B, starting from Tiny Aya Tameez, with Llama-Guard-3-8B "
           "(4-bit) as the safety reward; same benchmark settings. **Δ** = after the extra steps minus Tameez.")]
 # MILU Hindi, measured earlier in the project on all 14,831 questions (scorecard): base, Hindi SFT, Tameez
-MILU = {"tiny_aya": (45.4, 41.3, 43.2), "llama": (38.5, 39.3, 39.5)}
+MILU = {"tiny_aya": (45.4, 41.3, 43.2), "tiny_aya_fire": (46.9, 43.6, 45.0), "llama": (38.5, 39.3, 39.5)}
 
 
 def load(results_dir, run):

@@ -40,6 +40,10 @@ ROWS = [  # (label, path into metrics.json, better)
 ]
 
 
+MILU_DOMAIN_N = {"Arts & Humanities": 2862, "Engineering & Tech": 2248, "Science": 2624, "Social Sciences": 1777,
+                 "Environmental Sciences": 1993, "Health & Medicine": 598, "Business Studies": 1422, "Law & Governance": 1307}
+
+
 def get(d, path):
     for k in path.split("."):
         if not isinstance(d, dict) or k not in d:
@@ -53,10 +57,15 @@ def fmt(v):
         return "—"
     if isinstance(v, dict):
         val = v.get("rate", v.get("accuracy", v.get("win_rate")))
+        if "rate" in v and v.get("n"):          # metrics.json keeps 4 decimals: use the exact count / n
+            val = round(v["rate"] * v["n"]) / v["n"]
+        dom = v.get("by_domain")
+        if "accuracy" in v and isinstance(dom, dict) and set(dom) == set(MILU_DOMAIN_N):
+            val = sum(round(a * MILU_DOMAIN_N[k]) for k, a in dom.items()) / sum(MILU_DOMAIN_N.values())
         if val is None:
             return "—"
         ci = v.get("ci95")
-        ci_s = f" [{ci[0]:.1%}–{ci[1]:.1%}]" if ci and ci[0] is not None else ""
+        ci_s = f" [{ci[0] + 0.0:.1%}–{ci[1] + 0.0:.1%}]" if ci and ci[0] is not None else ""   # + 0.0: no "-0.0%"
         return f"{val:.1%}{ci_s} (n={v.get('n', '?')})"
     return f"{v:.1f}" if isinstance(v, float) else str(v)
 

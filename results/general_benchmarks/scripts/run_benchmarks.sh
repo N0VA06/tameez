@@ -4,13 +4,15 @@
 # Knowledge is measured with Global-MMLU Lite in English and Hindi (the same ~400 MMLU questions in both languages);
 # the full 57-subject MMLU was dropped because it needs ~56k scoring requests per model (~1.5 GPU hours on an L4).
 #
-#   bash run_benchmarks.sh <hf_model_id> <short_name> [limit]
+#   pip install "vllm==0.33.0" "transformers==5.20.2" "lm_eval[ifeval,math]==0.4.13" langdetect immutabledict
+#   bash run_benchmarks.sh <hf_model_id or local model dir> <short_name> [limit]
 #
-# Results: /content/results/<short_name>/  (lm-eval JSON + per-sample logs), log: /content/<short_name>.log
+# Results: $OUT/<short_name>/ (lm-eval JSON + per-sample logs); OUT defaults to results/general_benchmarks/results.
+# Tables, chart and benchmarks.json: python finalize.py <OUT> <output folder>
 set -euo pipefail
-MODEL="$1"; NAME="$2"; LIMIT="${3:-500}"
+MODEL="$1"; NAME="$2"; LIMIT="${3:-500}"; OUT="${OUT:-results/general_benchmarks/results}"
 TASKS="xnli_en,xnli_hi,belebele_eng_Latn,belebele_hin_Deva,global_mmlu_en,global_mmlu_hi,gsm8k,ifeval"
-mkdir -p /content/results/"$NAME"
+mkdir -p "$OUT/$NAME"
 lm_eval \
   --model vllm \
   --model_args "pretrained=${MODEL},dtype=bfloat16,gpu_memory_utilization=0.85,max_model_len=4096,seed=1234,trust_remote_code=False" \
@@ -22,4 +24,4 @@ lm_eval \
   --batch_size auto \
   --seed 1234 \
   --log_samples \
-  --output_path /content/results/"$NAME"
+  --output_path "$OUT/$NAME"

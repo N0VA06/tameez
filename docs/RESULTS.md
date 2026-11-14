@@ -1,7 +1,9 @@
 # Results
 
-> This page covers the **Llama-3.2-3B run**. The same pipeline was rerun on Cohere Labs' **Tiny Aya Global**: its
-> scorecard is [`tiny_aya_run/results/scorecard.md`](../tiny_aya_run/results/scorecard.md), and both runs side by side
+> This page covers the **Llama-3.2-3B run**. The same pipeline was rerun on Cohere Labs' **Tiny Aya Global** and on
+> its South Asia variant **Tiny Aya Fire**: their scorecards are
+> [`tiny_aya_run/results/scorecard.md`](../tiny_aya_run/results/scorecard.md) and
+> [`tiny_aya_fire_run/results/scorecard.md`](../tiny_aya_fire_run/results/scorecard.md), and all three runs side by side
 > are in [`COMPARISON.md`](../COMPARISON.md).
 
 Living document: updated after every stage. Numbers come from `stages/<stage>/eval/metrics.json`, the full

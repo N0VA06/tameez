@@ -99,6 +99,103 @@
    "summary": "The losses came from the Hindi SFT stage, not GRPO. SFT cost English maths (GSM8K −9.0), English reading (−2.8) and MILU (−4.1) while lifting Hindi reading (+7.6) and instruction following (+3.8). GRPO moved every benchmark by less than 2 points and won back part of MILU (+1.9)."
   },
   {
+   "name": "Tiny Aya Fire",
+   "family": "tiny-aya-fire",
+   "rows": [
+    {
+     "label": "XNLI",
+     "lang": "en",
+     "base": 46.4,
+     "tameez": 52.0,
+     "delta": 5.6,
+     "sft": 50.6,
+     "sft_delta": 4.2,
+     "grpo_delta": 1.4
+    },
+    {
+     "label": "XNLI",
+     "lang": "hi",
+     "base": 49.4,
+     "tameez": 49.4,
+     "delta": 0.0,
+     "sft": 49.4,
+     "sft_delta": 0.0,
+     "grpo_delta": 0.0
+    },
+    {
+     "label": "Belebele",
+     "lang": "en",
+     "base": 81.8,
+     "tameez": 78.2,
+     "delta": -3.6,
+     "sft": 79.0,
+     "sft_delta": -2.8,
+     "grpo_delta": -0.8
+    },
+    {
+     "label": "Belebele",
+     "lang": "hi",
+     "base": 62.0,
+     "tameez": 63.8,
+     "delta": 1.8,
+     "sft": 65.8,
+     "sft_delta": 3.8,
+     "grpo_delta": -2.0
+    },
+    {
+     "label": "Global-MMLU Lite",
+     "lang": "en",
+     "base": 61.3,
+     "tameez": 61.5,
+     "delta": 0.2,
+     "sft": 62.0,
+     "sft_delta": 0.7,
+     "grpo_delta": -0.5
+    },
+    {
+     "label": "Global-MMLU Lite",
+     "lang": "hi",
+     "base": 54.5,
+     "tameez": 51.7,
+     "delta": -2.8,
+     "sft": 50.0,
+     "sft_delta": -4.5,
+     "grpo_delta": 1.7
+    },
+    {
+     "label": "GSM8K",
+     "lang": "en",
+     "base": 63.0,
+     "tameez": 54.6,
+     "delta": -8.4,
+     "sft": 52.2,
+     "sft_delta": -10.8,
+     "grpo_delta": 2.4
+    },
+    {
+     "label": "IFEval (prompt, strict)",
+     "lang": "en",
+     "base": 60.0,
+     "tameez": 65.0,
+     "delta": 5.0,
+     "sft": 67.2,
+     "sft_delta": 7.2,
+     "grpo_delta": -2.2
+    },
+    {
+     "label": "MILU (full)",
+     "lang": "hi",
+     "base": 46.9,
+     "tameez": 45.0,
+     "delta": -1.9,
+     "sft": 43.6,
+     "sft_delta": -3.3,
+     "grpo_delta": 1.4
+    }
+   ],
+   "summary": "The same picture as Tiny Aya Global: the losses came from Hindi SFT, not GRPO. SFT cost English maths (GSM8K −10.8), Hindi knowledge (Global-MMLU Lite Hindi −4.5, MILU −3.3) and English reading (−2.8) while lifting instruction following (+7.2), XNLI English (+4.2) and Hindi reading (+3.8). GRPO moved every benchmark by at most 2.4 points and won back part of the losses (GSM8K +2.4, Global-MMLU Lite Hindi +1.7, MILU +1.4)."
+  },
+  {
    "name": "Llama-3.2-3B",
    "family": "llama",
    "rows": [

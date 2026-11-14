@@ -44,11 +44,10 @@ results/
 ├── scorecard.md / .csv          the main result table (stage0 | stage1 | stage2 | ablations)
 ├── plots/                       PNG charts, one series per finished stage (index: plots/README.md)
 ├── reward_check/                reward sanity check (unit cases, labelling sheet, correlations)
-└── logs/                        one timestamped log per script and per run_colab step
+└── logs/                        one timestamped log per script
 ```
 
-Model weights (`model/`), replies to harmful prompts and human-check sheets are git-ignored. `run_colab.sh` syncs
-all of `stages/`, `results/` and `data/processed` to Google Drive after every step.
+Model weights (`model/`), replies to harmful prompts and human-check sheets are git-ignored.
 
 ## Models
 
@@ -63,7 +62,7 @@ all of `stages/`, `results/` and `data/processed` to Google Drive after every st
 
 ## Steps
 
-| # | Step (`run_colab.sh <step>`) | Script(s) | GPU | Writes |
+| # | Step | Script(s) | GPU | Writes |
 |---|---|---|---|---|
 | 1 | download | `download_data.py` | – | `data/raw/` |
 | 2 | `lexicon` | `build_lexicon.py` | – | `data/lexicons/lexicon.txt`, `whitelist_auto.txt`, `whitelist_candidates.tsv`, `lexicon_stats.json` |
@@ -86,16 +85,14 @@ all of `stages/`, `results/` and `data/processed` to Google Drive after every st
 
 - Every script logs with timestamps to the console **and** to `results/logs/<script>.log` (e.g. `build_data.log`,
   `evaluate.log`), including its arguments, GPU memory at start, row counts and the start, end and duration of each step.
-- `run_colab.sh` also writes `results/logs/<step>.log` with START/END times, GPU memory and the full console output.
 - Long loops show tqdm progress bars. vLLM's own bar shows prompts done, it/s and tokens/s, and training shows the trainer bar.
   To watch live: `tail -f results/logs/<step>.log`.
 - **GPU lock.** GPU scripts take an exclusive lock (`/tmp/tameez_gpu.lock`) before loading a model. A second GPU
   step started at the same time waits, and logs "waiting for the GPU" every minute, instead of crashing with
   vLLM's "Free memory … is less than desired GPU memory utilization". Child processes such as `evaluate.py` run by
   `score_checkpoints.py` inherit the parent's lock.
-- **Live Drive sync.** Colab can end a runtime without warning (it did once, about 1 h 45 min into GRPO, and the
-  checkpoints that were only on the VM's disk were lost). `sft`, `grpo` and `ckpts` now copy their stage folder to
-  Drive every 10 minutes while they run, so at most 10 minutes of checkpoints can be lost.
+- **Resuming.** GRPO saves a full checkpoint (adapter, optimizer, scheduler and RNG state) every 50 steps;
+  `train_grpo.py --resume-from stages/stage2_grpo/model/checkpoint-N` continues a run that was cut off.
 - `llm.load` logs free GPU memory. If less is free than requested, it lowers its memory share and says so.
 
 ## Files in every `stages/<stage>/eval/`

@@ -58,7 +58,7 @@ env.reward_specs(wrap=fn)        # rewards=... for aligntune create_rl_trainer
 
 | Where | Call | Output |
 |---|---|---|
-| after `build_data.py` (`run_colab.sh data`) | `env_check.py` → `validate()`, `stats()` | `stages/stage1_sft/env/env_check.json`. GRPO refuses to start if validation fails |
+| after `build_data.py` | `env_check.py` → `validate()`, `stats()` | `stages/stage1_sft/env/env_check.json`. GRPO refuses to start if validation fails |
 | Stage 0 and Stage 1 scorecards | `env_check.py --rollout` | `stages/<stage>/env/rollout_report.json`: the reward each model earns **before** GRPO |
 | GRPO | `train_grpo.py` → `TameezEnv(...).reward_specs(wrap=sample_logger)` | per-reward curves in `train/train_log.json`, sampled completions in `train/reward_samples.json` |
 | Stage 2 scorecard | `env_check.py --rollout` | the same report after GRPO, directly comparable with Stage 1 |
