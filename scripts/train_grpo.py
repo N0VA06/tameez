@@ -12,7 +12,7 @@ Outputs (<out>/, default stages/stage2_grpo/):
 
 Defaults are sized for one 24 GB L4 (measured: Llama 2 h 17 min at ~27 s/step, Tiny Aya 3 h 35 min at ~44 s/step): 300 steps, 4 prompts x 4 generations per step
 (batch 8 x 2 accumulation), completions up to 256 tokens, learning rate 5e-5, checkpoint every 50 steps.
-Why: at the plan's 5e-6 (and at 2e-5 over 150 steps) the KL to Stage 1 stayed below 0.003 and held-out changes
+Why: at 5e-6 (and at 2e-5 over 150 steps) the KL to Stage 1 stayed below 0.003 and held-out changes
 were within noise, i.e. the LoRA barely moved; no reward hacking was seen (stable reply length, non-zero
 reward variance in every group). The beta = 0.04 KL penalty is kept as the guard against drifting too far.
 Plan setting (A100): --max-steps 400 --num-generations 8 --grad-accum 4 --max-completion-length 384.
@@ -83,7 +83,7 @@ def main():
     ap.add_argument("--num-generations", type=int, default=4, help="8 on an A100, 4 on a 24 GB GPU")
     ap.add_argument("--batch-size", type=int, default=8, help="completions per micro-batch (= 2 prompts x 4)")
     ap.add_argument("--grad-accum", type=int, default=2)
-    ap.add_argument("--lr", type=float, default=5e-5, help="plan: 5e-6; see module docstring for why 5e-5")
+    ap.add_argument("--lr", type=float, default=5e-5, help="see the module docstring for why 5e-5 and not 5e-6")
     ap.add_argument("--beta", type=float, default=0.04)
     ap.add_argument("--max-completion-length", type=int, default=256)
     ap.add_argument("--vllm-mem", type=float, default=0.35,

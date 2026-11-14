@@ -1,6 +1,6 @@
 # Pipeline
 
-How the plan ([PLAN.md](PLAN.md)) is implemented: every step, its inputs, and every file it writes.
+How the pipeline is implemented: every step, its inputs, and every file it writes.
 Each step can be re-run safely: finished parts are cached and skipped.
 
 ```
@@ -156,9 +156,9 @@ green. Both sets pass the dataviz validator's colour-blindness checks. Every bar
 Checks run on the CPU build of Set B: 0 duplicate prompts per bucket; the language tag agrees with the detected
 script for 100% of rows; lexicon words appear in 26% of angry-user prompts (by design), 2% of harmful prompts and 0% of benign prompts.
 
-## Decisions that differ from PLAN.md
+## Design decisions
 
-| Plan | Implemented | Why |
+| First design | Implemented | Why |
 |---|---|---|
 | IndicAlign romanised Hindi for Hinglish | Aya Expanse rewrites of Devanagari text (`make_synthetic.py`) | IndicAlign `hin_Latn` is machine transliteration (see DATA_ANALYSIS.md) |
 | CuratorKIT paraphrase / dedup | Aya Expanse via vLLM; MinHash via `datasketch`; CuratorKIT later re-checks the finished splits (`scripts/curate_with_curatorkit.py`) | Same idea with fewer moving parts; every generation is cached with its validation result |

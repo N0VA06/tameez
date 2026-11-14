@@ -99,7 +99,7 @@ The six training rewards on 200 pool prompts (50 per bucket), before GRPO:
 ![RL prompt pool](../results/llama_3_2_3b/plots/07_rl_prompt_pool.png)
 
 The GRPO prompt pool has 4,375 prompts: 1,520 harmful (refuse politely), 1,198 angry users with a real question,
-411 tricky-benign and 1,246 benign. 65% are non-harmful, matching the plan, so refusing everything is heavily penalised.
+411 tricky-benign and 1,246 benign. 65% are non-harmful, by design, so refusing everything is heavily penalised.
 By language: 59% Devanagari Hindi, 25% Roman Hinglish, 16% English.
 
 ![Guard prompt filter](../results/llama_3_2_3b/plots/08_guard_prompt_filter.png)
@@ -152,7 +152,7 @@ Loss fell from 1.54 to 1.30 and was still drifting down: one epoch on 5,000 rows
 | Explicit refusal of harmful prompts | 31.9% | 28.3% | −3.6 points |
 | Over-refusal on benign prompts | 2.1% | 3.3% | +1.2 points (intervals overlap: may be noise) |
 
-This reproduces the effect the plan cites (Qi et al., ICLR 2024, *Fine-tuning aligned language models compromises
+This reproduces the effect reported by Qi et al. (, ICLR 2024, *Fine-tuning aligned language models compromises
 safety*): plain Hindi fine-tuning, with no harmful data, made the model more willing to answer harmful requests and
 much more abusive, especially in Hinglish, while slightly improving Hindi knowledge. The safety losses are the target
 Stage 2 has to recover **without** giving back the MILU gain or raising over-refusal.
@@ -211,7 +211,7 @@ became Stage 2**. Everything below is the full scorecard of that checkpoint.
 | Unsafe, Hinglish red-teaming | 30.9% | **15.8%** | halved, but still the weakest set |
 | Bad-word replies | 3.0% | **0.7%** | ÷4 |
 | Explicit refusal of harmful prompts | 28.3% | **58.5%** | ×2 |
-| MILU Hindi | 39.3% | **39.5%** | kept (plan: within 1 point) |
+| MILU Hindi | 39.3% | **39.5%** | kept (target: within 1 point) |
 | Over-refusal, IndicSafe harmless + tricky | 0.0% | 1.2% | +2 prompts of 170 |
 | Over-refusal, own tricky test | 0.7% | 2.1% | +2 prompts of 146 |
 | Over-refusal, angry users | 8.0% | **15.5%** | **roughly doubled** |
@@ -249,9 +249,9 @@ Same 200 pool prompts for every stage (total weighted reward / refusal rate / me
 GRPO raised the reward on harmful, angry-user and tricky prompts, left benign prompts unchanged, and made refusals of
 harmful prompts much shorter (199 chars). The angry-user refusal rate rose from 10% to 16% here as well.
 
-### Verdict against the plan
+### Verdict against the targets set before training
 
-| Plan target (vs Stage 1) | Result | Met? |
+| Target (vs Stage 1) | Result | Met? |
 |---|---|---|
 | Unsafe reply rate: halve it | 15.6% → 3.7% | ✅ (÷4.2) |
 | Bad-word rate under 0.5% | 0.7% | ≈ (close; was 3.0%) |
@@ -288,8 +288,8 @@ claim holds for ordinary benign prompts but not for abusive-but-legitimate ones.
 
 | Setting | Value | Why |
 |---|---|---|
-| Start model | Stage 1 merged | the plan: align the model a company would ship |
-| Learning rate | 5e-5 (plan 5e-6) | tuning runs at 5e-6 (20 steps) and 2e-5 (150 steps) left the KL to Stage 1 below 0.003 and held-out changes within noise: the LoRA barely moved |
+| Start model | Stage 1 merged | align the model a company would ship |
+| Learning rate | 5e-5 (first design 5e-6) | tuning runs at 5e-6 (20 steps) and 2e-5 (150 steps) left the KL to Stage 1 below 0.003 and held-out changes within noise: the LoRA barely moved |
 | Steps | 300 (1,200 prompts) | the reward rose for the first ~75 steps of the tuning run and then flattened at the lower learning rate |
 | KL penalty β | 0.04 | unchanged; guards against drifting too far from Stage 1 |
 | Prompts × replies per step | 4 × 4 | fits the L4; every group of 4 had different rewards (non-zero variance), so the signal is usable |
@@ -303,9 +303,9 @@ and almost no bad words appeared.
 
 ## Compute settings (one 24 GB L4)
 
-The plan was written for an A100 option. Everything here runs on a single L4, with these reductions:
+Everything runs on a single L4. Settings first designed for a larger GPU were reduced:
 
-| Setting | Plan | Used on the L4 | Effect |
+| Setting | First design | Used on the L4 | Effect |
 |---|---|---|---|
 | SFT rows | 10–20K | 5,000 stratified (all Hinglish + Aya, random Dolly/OASST) | ~50 min instead of ~2.5 h |
 | SFT max length / batch | 1,024 / 8×4 | 768 / 4×8 (same effective batch 32) | fits memory |

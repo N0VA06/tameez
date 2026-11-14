@@ -45,3 +45,4 @@ __pycache__/
 results/reward_check/*.csv
 results/reward_check/reward_check.json
 results/logs/
+/results/interpretability/raw/

@@ -147,7 +147,7 @@ Cohere Labs × Hugging Face, Nov 2026).
 | Repo | Role in Tameez |
 |---|---|
 | **[AlignTune](https://github.com/Lexsi-Labs/aligntune)** 0.1.30 (Llama run), 0.1.35 (Tiny Aya runs) | **Both training stages.** `scripts/train_sft.py` calls `create_sft_trainer` (LoRA SFT, TRL backend). `scripts/train_grpo.py` calls `create_rl_trainer(algorithm="grpo", loss_type="dr_grpo")` with the six Tameez rewards, which `TameezEnv.reward_specs()` passes in AlignTune's custom-reward format (`{"type": "custom", "weight": w, "params": {"function": fn}}`). Each reward follows AlignTune's per-sample contract `fn(text, prompt=..., bucket=..., lang=..., allowed_terms=...) -> float \| None`, so AlignTune forwards the pool's extra columns (bucket, language, exempt words) to every reward. AlignTune writes a `lexsi_provenance.json` next to every adapter |
-| **[CuratorKIT](https://github.com/Lexsi-Labs/CuratorKIT)** 0.1.27 | **Auditing the data.** `scripts/curate_with_curatorkit.py` re-checks the published splits with CuratorKIT's `ExactDeduplicator`, `MinHashDeduplicator` and `SecretsGate`: duplicates inside Sets A and B, training prompts that near-duplicate a test prompt, and leaked secrets ([report](results/curatorkit_report.md)). It found 3 real overlaps out of 18,642 training rows, all in benign over-refusal tests. The data itself was built with Aya Expanse 8B via vLLM and `datasketch` MinHash (see [PIPELINE.md](docs/PIPELINE.md#decisions-that-differ-from-planmd)) |
+| **[CuratorKIT](https://github.com/Lexsi-Labs/CuratorKIT)** 0.1.27 | **Auditing the data.** `scripts/curate_with_curatorkit.py` re-checks the published splits with CuratorKIT's `ExactDeduplicator`, `MinHashDeduplicator` and `SecretsGate`: duplicates inside Sets A and B, training prompts that near-duplicate a test prompt, and leaked secrets ([report](results/curatorkit_report.md)). It found 3 real overlaps out of 18,642 training rows, all in benign over-refusal tests. The data itself was built with Aya Expanse 8B via vLLM and `datasketch` MinHash (see [PIPELINE.md](docs/PIPELINE.md#design-decisions)) |
 | **[AuditKIT](https://github.com/Lexsi-Labs/AuditKIT)** 1.1.10 | **Auditing the results.** `scripts/audit_with_auditkit.py` loads every stage's saved scorecard replies as AuditKIT samples, scores them through AuditKIT's `precomputed` model (no regeneration, CPU only) with AuditKIT scorers for unsafe replies, bad words, refusals and over-refusal plus AuditKIT's own `RefusalDetector`, and reports the Stage 0 → 1 → 2 deltas with AuditKIT's `compare`. Reports: [Tiny Aya Global](results/tiny_aya_global/auditkit_report.md), [Tiny Aya Fire](results/tiny_aya_fire/auditkit_report.md), [Llama](results/llama_3_2_3b/auditkit_report.md) |
 | SafeTune, CircuitKIT | not used |
 
@@ -426,6 +426,38 @@ The extra steps cut what the training judge flags by about a third and doubled o
 
 The run's [checkpoints](https://huggingface.co/IINOVAII/Tiny-Aya-Global-Tameez-GRPO-checkpoints/tree/main/hinglish-followup), [replies and judge verdicts](https://huggingface.co/datasets/IINOVAII/tameez-eval-outputs/tree/main/tiny_aya/hinglish_followup) and [training logs](https://huggingface.co/datasets/IINOVAII/tameez-training-logs/tree/main/tiny_aya_global/hinglish_followup) are published next to the main ones; its general benchmarks are in [`results/general_benchmarks/`](results/general_benchmarks/). Reproduce it with `TAMEEZ_GUARD_TRAIN=meta-llama/Llama-Guard-3-8B TAMEEZ_GUARD_4BIT=1 python scripts/train_grpo.py --model IINOVAII/Tiny-Aya-Global-Tameez-GRPO --data data/processed/B_pool_hin.json --out stages/tameez_hinglish --max-steps 150 --save-steps 25 --batch-size 4 --grad-accum 4`, then `scripts/evaluate.py` for the scorecard and `scripts/judge_independent.py` for the Qwen3Guard verdicts; `train_grpo.py --resume-from <checkpoint>` continues a run that was cut off.
 
+### Why Hinglish gets through: a look inside the models
+
+The 139 Hinglish red-teaming prompts are romanized copies of 139 Hindi prompts in the same scorecard, so each model
+answers the same request in two scripts. Final Tiny Aya Global refuses 75.5% of them in Devanagari and 10.1% in Roman
+script; Llama 56.1% and 8.6%. We looked inside all nine models (base, Hindi SFT and Tameez GRPO of each run) for those
+twins, using the difference-in-means harm direction of [Arditi et al. (2024)](https://arxiv.org/abs/2406.11717),
+linear probes, and steering.
+
+| Final models | Harm direction position: harmful, Devanagari | Same requests, Roman | Harmless, Roman | Probe AUROC, Roman | Roman unsafe: as is → with gated steering |
+|---|---|---|---|---|---|
+| Tiny Aya Global | 0.72 | **0.51** | 0.18 | 0.995 | 27.3% → 10.8% |
+| Tiny Aya Fire | 0.74 | **0.50** | 0.18 | 0.998 | 30.9% → 19.4% |
+| Llama-3.2-3B | 0.82 | **0.33** | 0.16 | 0.983 | 15.1% → 2.9% |
+
+Position: 0 = typical harmless prompt, 1 = typical harmful Devanagari prompt, at the steering layer.
+
+- **The models understand the Roman prompts and know they are harmful:** 97–99% of Roman prompts sit closest to their
+  own Devanagari twin, and a linear probe separates harmful from harmless Roman prompts almost perfectly.
+- **Both scripts share one harm direction** (cosine 0.82–0.93), **but Roman input moves the model only part of the way
+  along it,** below where the trained refusal sets in. The position predicts which twins get refused (AUROC up to
+  0.94).
+- **Hindi SFT made the gap worse for Llama** (Roman share of the signal 0.34 → 0.18); **GRPO narrowed it for Tiny
+  Aya** (0.34 → 0.51), mostly by moving harmless Roman prompts down.
+- **Removing the direction cuts Tiny Aya's Devanagari refusals by a third** (75.5% → 51.1%). **Adding it when a probe
+  flags the prompt brings Roman refusals back.** The cost is more refused harmless prompts, mostly angry users (Tiny
+  Aya Global: 0% → 6.6% Roman, 5.3% → 9.4% Devanagari, 3.3% → 21.1% English).
+
+What this suggests: train on Devanagari/Roman twin pairs with the same reward, or add a term that pulls a Roman prompt's
+harm-direction position toward its twin's, and protect that direction during Hindi SFT. A probe-gated steer works as
+a stopgap if its gate is trained with angry-user prompts as harmless. Method, every table, plots and limits:
+[results/interpretability/](results/interpretability/).
+
 ## Plots
 
 Each run has the same set of result and training plots (unsafe rate by test set, Hindi vs Hinglish, over-refusal,
@@ -503,7 +535,7 @@ Details: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) · [docs/REWARDS.md](docs/RE
   with the 8B judge as the reward helped less than it seemed (see
   [Extra Hinglish training](#extra-hinglish-training-with-a-stronger-safety-reward)).
 - **MuRIL over-flags Roman Hinglish,** so its "abusive" rate is unreliable for Hinglish replies.
-- **Small compute:** one L4 GPU meant 300 GRPO steps with 4 prompts × 4 replies each (the plan assumed more), and
+- **Small compute:** one L4 GPU meant 300 GRPO steps with 4 prompts × 4 replies each, and
   5,000 SFT rows instead of 10–20K.
 - **The refusal detector is a phrase matcher:** it counts "I won't respond to that tone, but here's the answer…" as a refusal.
 - **Model mirrors:** Llama-3.2-3B and Llama-Guard-3-1B were loaded from byte-identical public mirrors while Meta access was pending.
@@ -646,13 +678,13 @@ python scripts/evaluate.py --stage stage2_grpo --model IINOVAII/Tiny-Aya-Global-
 │   ├── DATASETS.md               every data source: location, schema, licence, role
 │   ├── DATA_ANALYSIS.md          what we found in the data before training
 │   ├── RESULTS.md                the Llama run, stage by stage
-│   ├── ALIGNTUNE_ISSUES.md       AlignTune issues we hit, with reproductions and fixes
-│   └── PLAN.md                   the original project plan
+│   └── ALIGNTUNE_ISSUES.md       AlignTune issues we hit, with reproductions and fixes
 ├── results/                      start at results/README.md
 │   ├── COMPARISON.md             the three models, every stage side by side
 │   ├── tiny_aya_global/          main run: scorecard, plots, AuditKIT report, per-stage metrics
 │   ├── tiny_aya_fire/            the same for Tiny Aya Fire
 │   ├── llama_3_2_3b/             the same for Llama-3.2-3B
+│   ├── interpretability/         why Hinglish gets through: harm direction, probes and steering on all nine models
 │   ├── general_benchmarks/       XNLI, Belebele, Global-MMLU Lite, GSM8K, IFEval for every stage of every model
 │   ├── api_comparison.md         Tameez vs Command A (111B) on 200 held-out prompts
 │   └── curatorkit_report.md      CuratorKIT audit of the published data splits

@@ -1,6 +1,6 @@
 """Download the raw datasets used by Tameez into data/raw/.
 
-Only the files the plan needs are fetched (ai4bharat/indic-align alone is 28 GB).
+Only the files the pipeline needs are fetched (ai4bharat/indic-align alone is 28 GB).
 Gated repos are attempted and skipped with a warning if access is not granted.
 
 Usage:

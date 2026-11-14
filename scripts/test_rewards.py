@@ -1,4 +1,4 @@
-"""Reward sanity check (plan Day 4): do the rewards rank replies the way a human would?
+"""Reward sanity check: do the rewards rank replies the way a human would?
 
 Modes:
     --unit       built-in hand-made cases for the rule-based rewards (CPU, seconds)

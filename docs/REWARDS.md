@@ -29,11 +29,11 @@ It is passed as `{"type": "custom", "weight": w, "params": {"function": fn}}`.
 ## Checks
 
 - `python -I scripts/test_rewards.py --unit` runs 12 hand-made cases for the rule-based rewards. They must all pass.
-- `--template` and `--check` cover the plan's Day 4 test: 50 real Stage 1 replies are scored 1–5 by a human,
+- `--template` and `--check` run the human check: 50 real Stage 1 replies are scored 1–5 by a human,
   then the Spearman correlation of each reward and of the weighted total is computed against those scores.
 
 ## Ablations
 
-The plan's two reward ablations are GRPO runs with one reward left out: `train_grpo.py --out stages/ablations/<name>
+The two reward ablations are GRPO runs with one reward left out: `train_grpo.py --out stages/ablations/<name>
 --exclude refusal_calibration` (expect over-refusal to rise) and `--exclude language_match` (expect drift to English). `--exclude` takes any reward name.
 Results land in `stages/ablations/<name>/` and appear as extra columns in `results/scorecard.md`.

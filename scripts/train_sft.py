@@ -7,7 +7,7 @@ Outputs (stages/stage1_sft/):
 
 Defaults are sized for one 24 GB L4 (~50 min): a 5,000-row stratified sample of Set A (every
 Hinglish and Aya row + a random mix of Dolly-T and OASST-T), max length 768, batch 4 x 8 accumulation.
-Use --max-samples 0 for all ~14K rows (plan setting, ~2.5 h on an L4).
+Use --max-samples 0 for all ~14K rows (~2.5 h on an L4).
 
 Usage:
     python scripts/train_sft.py --max-steps 5 --out stages/sft_smoke --no-merge   # smoke test

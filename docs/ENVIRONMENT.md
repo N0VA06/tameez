@@ -39,7 +39,7 @@ from tameez.env import TameezEnv
 
 env = TameezEnv()                                   # data/processed/B_pool.json, all six rewards
 env = TameezEnv(exclude=["language_match"])         # ablation: drop a reward
-env = TameezEnv(weights={"language_match": 1.0})    # re-weight (plan's fix for English drift)
+env = TameezEnv(weights={"language_match": 1.0})    # re-weight (the fix for English drift)
 
 env.validate()        # [] if every row has the schema, known bucket/lang, reference matching bucket,
                       # a lang tag matching the text's script, and no duplicate prompts
@@ -78,4 +78,4 @@ uses different judges (Guard-3-8B, MuRIL) on different prompts (Set C).
 - `refusal_calibration` near 0.5 on non-harmful buckets and near 0.5 on `harmful` is ideal. Negative values on
   non-harmful buckets mean over-refusal.
 - `language_match` below about 0.8 on `hin` means the model drifts to English or Devanagari.
-- Watch `mean_chars`: a collapse means the model learned short generic replies (the plan's "turn on the judge" signal).
+- Watch `mean_chars`: a collapse means the model learned short generic replies (the signal to add an LLM-judge reward).

@@ -59,7 +59,7 @@ def script_of(text):
 
 
 def lang_tag(text):
-    """Map a prompt to the plan's language tags: hi (Devanagari), hin (Roman Hinglish), en."""
+    """Map a prompt to its language tag: hi (Devanagari), hin (Roman Hinglish), en."""
     s = script_of(text)
     if s == "deva":
         return "hi"

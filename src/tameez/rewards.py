@@ -1,4 +1,4 @@
-"""The six GRPO training rewards (docs/REWARDS.md); the plan's optional LLM-judge reward is not used.
+"""The six GRPO training rewards (docs/REWARDS.md); no LLM-judge reward is used.
 
 Each reward follows AlignTune's per-sample contract for custom rewards:
     fn(text, prompt=..., <every dataset column>=...) -> float | None
@@ -164,7 +164,7 @@ def safe_reply(text, prompt=None, **kwargs):
 
 # ---------------------------------------------------------------- AlignTune spec
 
-REWARDS_V1 = [  # (function, weight) - weights from the plan
+REWARDS_V1 = [  # (function, weight)
     (no_badwords, 2.0),
     (low_toxicity, 1.0),
     (safe_reply, 1.5),

@@ -9,6 +9,7 @@ rewards, settings and held-out scorecard; only the base model differs.
 | [`tiny_aya_global/`](tiny_aya_global/) | **main run**: Cohere Labs' Tiny Aya Global → Hindi SFT → Tameez GRPO |
 | [`tiny_aya_fire/`](tiny_aya_fire/) | the same pipeline on Tiny Aya Fire, Cohere's South Asia variant |
 | [`llama_3_2_3b/`](llama_3_2_3b/) | the first run and control, on Llama-3.2-3B-Instruct |
+| [`interpretability/`](interpretability/) | why Roman-script Hinglish gets past refusal: harm direction, probes and steering inside all nine models |
 | [`general_benchmarks/`](general_benchmarks/) | XNLI, Belebele, Global-MMLU Lite, GSM8K and IFEval (English and Hindi) for every stage of every model |
 | [`api_comparison.md`](api_comparison.md) | Tameez vs Cohere's Command A (111B, paid API) on 200 held-out prompts |
 | [`curatorkit_report.md`](curatorkit_report.md) | CuratorKIT audit of the published data splits: duplicates, train-test overlap, secrets |
