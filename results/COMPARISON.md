@@ -111,10 +111,10 @@ Passes constraints: False
   4.2–6.7%). The script then fell back to the lowest unsafe + bad-word rate, which is step 300 in both runs. On the full
   test set their over-refusal is 3.9% (Global) and 3.5% (Fire), lower than Llama's 7.0%. Fire's step 300 met the other
   two rules (script 98.5%, replies 84% of Stage 1's length); Global's was also just under the length rule (56%).
-- Llama numbers come from `stages/`, Tiny Aya Global from `tiny_aya_run/stages/` (Colab L4, 11 Nov 2026) and Tiny Aya
-  Fire from `tiny_aya_fire_run/stages/` (Colab L4, 13 Nov 2026). Same code, data, rewards, settings and scorecard; only
+- Llama numbers come from `llama_3_2_3b/stages/`, Tiny Aya Global from `tiny_aya_global/stages/` (Colab L4, 11 Nov 2026) and Tiny Aya
+  Fire from `tiny_aya_fire/stages/` (Colab L4, 13 Nov 2026). Same code, data, rewards, settings and scorecard; only
   the policy changed (`TAMEEZ_POLICY=CohereLabs/tiny-aya-global` or `CohereLabs/tiny-aya-fire`). The Fire run was scored
   with the newer evaluation stack of the later runs (vLLM 0.33.0); re-running the published Global model on that stack
   moved its Hinglish unsafe rate from 29.5% to 28.1%, within the margin.
 - Rates are recomputed exactly as count / n (metrics.json stores them to 4 decimals) and MILU from its per-domain counts.
-- Regenerate: `python -I scripts/compare_runs.py --run . "Llama-3.2-3B" --run tiny_aya_run "Tiny Aya Global" --run tiny_aya_fire_run "Tiny Aya Fire" --out COMPARISON.md`
+- Regenerate: `python -I scripts/compare_runs.py --run results/llama_3_2_3b "Llama-3.2-3B" --run results/tiny_aya_global "Tiny Aya Global" --run results/tiny_aya_fire "Tiny Aya Fire"` (from the repository root)

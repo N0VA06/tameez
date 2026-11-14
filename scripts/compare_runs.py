@@ -1,7 +1,7 @@
 """Compare Tameez runs (e.g. Llama-3.2-3B, Tiny Aya Global, Tiny Aya Fire) stage by stage. CPU only.
 
-    python -I scripts/compare_runs.py --run . "Llama-3.2-3B" --run tiny_aya_run "Tiny Aya Global" \
-                                      --run tiny_aya_fire_run "Tiny Aya Fire" --out COMPARISON.md
+    python -I scripts/compare_runs.py --run results/llama_3_2_3b "Llama-3.2-3B" \
+        --run results/tiny_aya_global "Tiny Aya Global" --run results/tiny_aya_fire "Tiny Aya Fire" --out results/COMPARISON.md
 
 A run root is a folder holding stages/stage{0_base,1_sft,2_grpo}/... as written by the pipeline. Any number of runs.
 Rates are recomputed exactly as count / n from metrics.json (which stores them to 4 decimals) before rounding.
@@ -86,7 +86,7 @@ def best_of(vals, names, better):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", nargs=2, action="append", metavar=("ROOT", "NAME"), required=True)
-    ap.add_argument("--out", default="COMPARISON.md")
+    ap.add_argument("--out", default="results/COMPARISON.md")
     args = ap.parse_args()
     runs = [(root, name) for root, name in args.run]
     names = [n for _, n in runs]

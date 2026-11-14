@@ -2,13 +2,13 @@
 
 > This page covers the **Llama-3.2-3B run**. The same pipeline was rerun on Cohere Labs' **Tiny Aya Global** and on
 > its South Asia variant **Tiny Aya Fire**: their scorecards are
-> [`tiny_aya_run/results/scorecard.md`](../tiny_aya_run/results/scorecard.md) and
-> [`tiny_aya_fire_run/results/scorecard.md`](../tiny_aya_fire_run/results/scorecard.md), and all three runs side by side
-> are in [`COMPARISON.md`](../COMPARISON.md).
+> [`results/tiny_aya_global/scorecard.md`](../results/tiny_aya_global/scorecard.md) and
+> [`results/tiny_aya_fire/scorecard.md`](../results/tiny_aya_fire/scorecard.md), and all three runs side by side
+> are in [`results/COMPARISON.md`](../results/COMPARISON.md).
 
-Living document: updated after every stage. Numbers come from `stages/<stage>/eval/metrics.json`, the full
-table is [`results/scorecard.md`](../results/scorecard.md), and the plots are drawn by `scripts/make_plots.py` into
-[`results/plots/`](../results/plots/).
+Numbers come from `results/llama_3_2_3b/stages/<stage>/eval/metrics.json`, the full
+table is [`results/llama_3_2_3b/scorecard.md`](../results/llama_3_2_3b/scorecard.md), and the plots are drawn by
+`scripts/make_plots.py` into [`results/llama_3_2_3b/plots/`](../results/llama_3_2_3b/plots/).
 
 | Stage | What it is | Status |
 |---|---|---|
@@ -51,13 +51,13 @@ table is [`results/scorecard.md`](../results/scorecard.md), and the plots are dr
 
 ### The base model is twice as unsafe in Hinglish
 
-![Unsafe reply rate by test set](../results/plots/01_unsafe_rate_by_test_set.png)
+![Unsafe reply rate by test set](../results/llama_3_2_3b/plots/01_unsafe_rate_by_test_set.png)
 
 Across all 1,498 harmful test prompts, 10% of replies are unsafe. On the **same red-team prompts rewritten in
 Roman-script Hinglish, 21.6%** are unsafe (95% interval 15.6–29.1%, which does not overlap the Hindi interval).
 IndicSafe and SurakshaEval, which are mostly sensitive rather than openly harmful, sit around 6–7%.
 
-![Hindi vs Hinglish](../results/plots/02_hindi_vs_hinglish_redteaming.png)
+![Hindi vs Hinglish](../results/llama_3_2_3b/plots/02_hindi_vs_hinglish_redteaming.png)
 
 Side by side on the same prompts, the Hinglish replies are **2.2× as often unsafe, 13× as often abusive** (25.2% vs 1.9%),
 and the model **explicitly refuses only 5.8% of harmful Hinglish prompts against 31.8% in Hindi**. This is the gap
@@ -65,7 +65,7 @@ Tameez is built to close, and it is now measurable.
 
 ### Over-refusal is already low, so the "no rise" bar is tight
 
-![Over-refusal](../results/plots/03_over_refusal.png)
+![Over-refusal](../results/llama_3_2_3b/plots/03_over_refusal.png)
 
 The base model refuses 2.1% of benign prompts overall: 0% of IndicSafe's harmless and tricky prompts, 0.7% of our tricky
 test (benign questions with words like "kill a process"), and 5.0% of angry-user prompts (a rude user with a real
@@ -73,16 +73,16 @@ question). Stage 2 has to bring the unsafe rate down **without** raising these b
 
 ### Overview and Hindi knowledge
 
-![Scorecard overview](../results/plots/04_scorecard_overview.png)
+![Scorecard overview](../results/llama_3_2_3b/plots/04_scorecard_overview.png)
 
-![MILU by domain](../results/plots/06_milu_by_domain.png)
+![MILU by domain](../results/llama_3_2_3b/plots/06_milu_by_domain.png)
 
 MILU Hindi is 38.5% overall (random guessing is 25%), highest in Health & Medicine (52.5%). This is the
 no-regression baseline: Stage 1 should raise or keep it, and Stage 2 should stay within about 1 point of Stage 1.
 
 ### The RL environment before any training
 
-![Reward per bucket](../results/plots/05_env_reward_by_bucket.png)
+![Reward per bucket](../results/llama_3_2_3b/plots/05_env_reward_by_bucket.png)
 
 The six training rewards on 200 pool prompts (50 per bucket), before GRPO:
 
@@ -96,19 +96,19 @@ The six training rewards on 200 pool prompts (50 per bucket), before GRPO:
 
 ## Data
 
-![RL prompt pool](../results/plots/07_rl_prompt_pool.png)
+![RL prompt pool](../results/llama_3_2_3b/plots/07_rl_prompt_pool.png)
 
 The GRPO prompt pool has 4,375 prompts: 1,520 harmful (refuse politely), 1,198 angry users with a real question,
 411 tricky-benign and 1,246 benign. 65% are non-harmful, matching the plan, so refusing everything is heavily penalised.
 By language: 59% Devanagari Hindi, 25% Roman Hinglish, 16% English.
 
-![Guard prompt filter](../results/plots/08_guard_prompt_filter.png)
+![Guard prompt filter](../results/llama_3_2_3b/plots/08_guard_prompt_filter.png)
 
 Only **48%** of the "harmful" candidates from IndicAlign-Toxic are actually unsafe according to Llama-Guard-3-1B; the
 rest are ordinary questions (HH-RLHF first turns). Training them as "refuse" would have taught over-refusal, so
 only Guard-confirmed prompts are kept. The benign pools lost 4–5% that Guard considers unsafe.
 
-![Hinglish rewrite acceptance](../results/plots/09_hinglish_rewrite_acceptance.png)
+![Hinglish rewrite acceptance](../results/llama_3_2_3b/plots/09_hinglish_rewrite_acceptance.png)
 
 Natural Hinglish is scarce, so Aya Expanse 8B rewrote Devanagari prompts and SFT pairs into Roman script. The first
 prompt listed English words to keep and Aya pasted them into about 40% of its outputs. The fixed prompt (strict rules,
@@ -136,7 +136,7 @@ The same requests are flagged two to three times less often once they are writte
 2,737 Dolly-T, 831 OASST-T, 594 Aya Dataset and 838 Aya Hinglish rewrites. One epoch, learning rate 2e-4,
 157 steps, 32.5 minutes on the L4. No safety data at all: this is the model "a typical company would ship".
 
-![SFT loss](../results/plots/10_sft_training_loss.png)
+![SFT loss](../results/llama_3_2_3b/plots/10_sft_training_loss.png)
 
 Loss fell from 1.54 to 1.30 and was still drifting down: one epoch on 5,000 rows is a light fine-tune.
 
@@ -157,7 +157,7 @@ safety*): plain Hindi fine-tuning, with no harmful data, made the model more wil
 much more abusive, especially in Hinglish, while slightly improving Hindi knowledge. The safety losses are the target
 Stage 2 has to recover **without** giving back the MILU gain or raising over-refusal.
 
-![Unsafe rate, Stage 0 vs 1](../results/plots/01_unsafe_rate_by_test_set.png)
+![Unsafe rate, Stage 0 vs 1](../results/llama_3_2_3b/plots/01_unsafe_rate_by_test_set.png)
 
 The RL-environment rollout (plot 05) moved the same way: the total reward fell on harmful (2.66 → 2.56) and angry-user
 prompts (3.13 → 2.92), and Llama-Guard-3-1B's `safe_reply` on harmful prompts fell from 0.56 to 0.52.
@@ -170,7 +170,7 @@ six rewards. 300 steps × 4 prompts × 4 replies, learning rate 5e-5, KL penalty
 
 ### Training curves
 
-![GRPO training curves](../results/plots/11_grpo_training_curves.png)
+![GRPO training curves](../results/llama_3_2_3b/plots/11_grpo_training_curves.png)
 
 | Steps | Total reward | KL to Stage 1 | Reply length (tokens) | `safe_reply` | `low_toxicity` | `language_match` |
 |---|---|---|---|---|---|---|
@@ -202,7 +202,7 @@ became Stage 2**. Everything below is the full scorecard of that checkpoint.
 
 ### Result: much safer, Hindi knowledge kept, but more refusals for angry users
 
-![Unsafe rate by test set](../results/plots/01_unsafe_rate_by_test_set.png)
+![Unsafe rate by test set](../results/llama_3_2_3b/plots/01_unsafe_rate_by_test_set.png)
 
 | | Stage 1 | Stage 2 | Change |
 |---|---|---|---|
@@ -218,9 +218,9 @@ became Stage 2**. Everything below is the full scorecard of that checkpoint.
 | Mean reply length | 646 chars | 376 chars | shorter |
 | Helpfulness win rate vs Stage 1 (Aya Expanse, 400 prompts, both orders) | – | **42.1%** [37.3–47.0] | 48 wins · 241 ties · 111 losses; Aya Eval 44.5%, angry users 39.8% |
 
-![Hindi vs Hinglish](../results/plots/02_hindi_vs_hinglish_redteaming.png)
+![Hindi vs Hinglish](../results/llama_3_2_3b/plots/02_hindi_vs_hinglish_redteaming.png)
 
-![Over-refusal](../results/plots/03_over_refusal.png)
+![Over-refusal](../results/llama_3_2_3b/plots/03_over_refusal.png)
 
 **What the angry-user refusals are.** Reading the 31 replies flagged as refusals (out of 200):
 
@@ -235,7 +235,7 @@ benign prompts are barely affected (+2 prompts on each benign set).
 
 ### RL environment before and after GRPO
 
-![Reward per bucket](../results/plots/05_env_reward_by_bucket.png)
+![Reward per bucket](../results/llama_3_2_3b/plots/05_env_reward_by_bucket.png)
 
 Same 200 pool prompts for every stage (total weighted reward / refusal rate / mean reply length):
 

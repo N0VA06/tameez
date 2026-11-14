@@ -1,7 +1,7 @@
 """Cross-model comparison plots for the write-ups (CPU only).
 
-    python -I scripts/make_comparison_plots.py --run tiny_aya_run "Tiny Aya Global" \
-        --run tiny_aya_fire_run "Tiny Aya Fire" --run . "Llama-3.2-3B" --out assets
+    python -I scripts/make_comparison_plots.py --run results/tiny_aya_global "Tiny Aya Global" \
+        --run results/tiny_aya_fire "Tiny Aya Fire" --run results/llama_3_2_3b "Llama-3.2-3B" --out assets
 
 Writes <out>/compare_final_models.png (every final model on the headline metrics) and
 <out>/compare_unsafe_by_stage.png (unsafe replies at each stage, all harmful / Hindi / Hinglish red-teaming).

@@ -6,9 +6,15 @@ data/processed/*
 data/lexicons/*
 !data/lexicons/whitelist.txt
 
+# Working outputs of a fresh run (the three published runs live in results/<model>/)
+/stages/
+/results/scorecard.*
+/results/plots/
+/results/independent_judge.jsonl
+
 # Models and training outputs (stages/<stage>/model/ holds weights)
-stages/**/model/
-stages/**/env/rollout.json
+**/stages/**/model/
+**/stages/**/env/rollout.json
 outputs/
 *.safetensors
 *.bin
@@ -28,14 +34,14 @@ __pycache__/
 .DS_Store
 
 # Model replies to harmful prompts and human-check sheets (may contain unsafe text)
-stages/**/generations.json
-stages/**/scored.json
-stages/**/guard.json
-stages/**/toxicity.json
-stages/**/refusal_check.csv
-stages/**/samples_by_bucket.md
-stages/**/reward_samples.json
-stages/**/*_items.json
+**/stages/**/generations.json
+**/stages/**/scored.json
+**/stages/**/guard.json
+**/stages/**/toxicity.json
+**/stages/**/refusal_check.csv
+**/stages/**/samples_by_bucket.md
+**/stages/**/reward_samples.json
+**/stages/**/*_items.json
 results/reward_check/*.csv
 results/reward_check/reward_check.json
 results/logs/

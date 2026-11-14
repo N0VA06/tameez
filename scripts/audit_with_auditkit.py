@@ -1,8 +1,8 @@
 """Audit the saved scorecard replies of every stage with Lexsi Labs' AuditKIT. CPU only, no model is run.
 
     pip install auditkit
-    python -I scripts/audit_with_auditkit.py --root . --name "Llama-3.2-3B" --out results/auditkit_report.md
-    python -I scripts/audit_with_auditkit.py --root tiny_aya_run --name "Tiny Aya Global" --out tiny_aya_run/results/auditkit_report.md
+    python -I scripts/audit_with_auditkit.py --root results/llama_3_2_3b --name "Llama-3.2-3B" --out results/llama_3_2_3b/auditkit_report.md
+    python -I scripts/audit_with_auditkit.py --root results/tiny_aya_global --name "Tiny Aya Global" --out results/tiny_aya_global/auditkit_report.md
 
 Each stage's replies (stages/<stage>/eval/scored.json, written by scripts/evaluate.py) are loaded as AuditKIT samples
 with ``actual_output`` set, and scored through AuditKIT's ``precomputed`` model, so nothing is regenerated:
